@@ -9,10 +9,15 @@ data Creek = Creek {
 instance Read Creek where
   readsPrec _ input =
     let
---    TODO Refactor this code and ensure that everything works properly
-      (creek_str, rest) = splitAt 5 input
+      (creek_str, rest) = splitWhen (==' ') input
       (size_str, fields_str) = splitWhen (=='[') rest
       (height, width) = read size_str :: (Int, Int)
       list_of_moves = read fields_str :: [((Int, Int), Int)]
+
     in
-      [(Creek (height, width) list_of_moves, "")]
+      if creek_str /= "Creek"
+        then error "Input string should start with Creek"
+      else
+        [(Creek (height, width) list_of_moves, "")]
+
+
