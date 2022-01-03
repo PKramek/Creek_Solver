@@ -16,13 +16,11 @@ instance Read Creek where
       (size_str, fields_str) = splitWhen (=='[') rest
       (height, width) = read size_str :: (Int, Int)
       list_of_moves = read fields_str :: [((Int, Int), Int)]
-
     in
       if creek_str /= "Creek"
         then error "Input string should start with Creek"
       else
         [(Creek (height, width) list_of_moves, "")]
-
 
 getSize:: Creek -> (Int, Int)
 getSize (Creek size _ ) = size

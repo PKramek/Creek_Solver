@@ -7,5 +7,3 @@ splitWhen f xs = helperSplit f [] xs
     helperSplit f acc []  = (acc, [])
     helperSplit f acc (x:xs)  | f x == False = helperSplit f (acc ++ [x]) xs
                               | otherwise = (acc, (x:xs))
-
-
