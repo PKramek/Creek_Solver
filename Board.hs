@@ -1,6 +1,6 @@
 module Board(get_empty_board, change_all_null_values_to_empty, get_index_of_first_empty_field,
  get_indexes_of_neighboring_points, get_indexes_of_empty_neighboring_points,
- set_values_under_indexes_to_value, area_grow) where
+ set_values_under_indexes_to_value, area_grow, are_empty_fields_creating_single_area) where
 
 import Data.Matrix
 import Data.List
@@ -71,3 +71,11 @@ area_grow_recurrent seeds matrix num_columns num_rows = let
     modified_matrix = set_values_under_indexes_to_value matrix empty_neighbours_indexes testValueField
   in
     area_grow_recurrent (remaining_seeds ++ empty_neighbours_indexes) modified_matrix num_columns num_rows
+
+are_empty_fields_creating_single_area:: Matrix Int -> Bool
+are_empty_fields_creating_single_area matrix = let
+  area_seed = get_index_of_first_empty_field matrix
+  matrix_after_area_grow = area_grow area_seed matrix
+  as_list = toList matrix_after_area_grow
+  in
+    (find (==emptyValueField) as_list) == Nothing

@@ -173,7 +173,60 @@ test_area_grow_identity = let
   in
     output_matrix == expected_output
 
+test_area_grow_single_channel:: Bool
+test_area_grow_single_channel = let
+    a = emptyValueField
+    b = filledValueField
+    c = testValueField
 
+    single_channel_matrix:: Matrix Int
+    single_channel_matrix = fromLists [
+      [a, a, a, a],
+      [b, b, b, a],
+      [b, b, a, a],
+      [a, a, a, b]
+      ]
+
+    expected_output = fromLists [
+        [c, c, c, c],
+        [b, b, b, c],
+        [b, b, c, c],
+        [c, c, c, b]
+        ]
+    output_matrix = area_grow (get_index_of_first_empty_field single_channel_matrix) single_channel_matrix
+  in
+    output_matrix == expected_output
+
+test_are_empty_fields_creating_single_area_identity_matrix:: Bool
+test_are_empty_fields_creating_single_area_identity_matrix = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  identity_matrix = fromLists [
+        [b, a, a, a, a],
+        [a, b, a, a, a],
+        [a, a, b, a, a],
+        [a, a, a, b, a],
+        [a, a, a, a, b]
+        ]
+  in
+    are_empty_fields_creating_single_area identity_matrix == False
+
+test_are_empty_fields_creating_single_area_single_channel_matrix:: Bool
+test_are_empty_fields_creating_single_area_single_channel_matrix = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  single_channel_matrix = fromLists [
+        [a, a, a, a],
+        [b, b, b, a],
+        [b, b, a, a],
+        [a, a, a, b]
+        ]
+  in
+    are_empty_fields_creating_single_area single_channel_matrix == True
 
 run_all_tests:: ([Bool], Bool)
 run_all_tests = let
@@ -185,7 +238,10 @@ run_all_tests = let
    test_set_values_under_indexes_to_test_value_no_indexes,
    test_area_grow_empty_board,
    test_area_grow_split_in_two,
-   test_area_grow_identity
+   test_area_grow_identity,
+   test_area_grow_single_channel,
+   test_are_empty_fields_creating_single_area_identity_matrix,
+   test_are_empty_fields_creating_single_area_single_channel_matrix
    ]
   in
     (tests, (all (==True) tests))
