@@ -10,4 +10,4 @@ creek = read input :: Creek
 empty_board:: Matrix Int
 empty_board = get_empty_board (getHeight creek) (getWidth creek)
 
-first_element = empty_board ! (1,1)
+
