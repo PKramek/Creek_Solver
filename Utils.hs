@@ -23,3 +23,7 @@ uniqueCombinations 0 _ = [[]]
 uniqueCombinations _ [] = []
 uniqueCombinations n (x : xs) = map (x :) (uniqueCombinations (n - 1) xs) ++ uniqueCombinations n xs
 
+firstSatisfying :: (a->Bool) -> [a] -> Maybe a
+firstSatisfying f [] = Nothing
+firstSatisfying f (x:xs)  | f x == True   = Just x
+                          | otherwise     = firstSatisfying f xs
