@@ -19,3 +19,4 @@ tuple_of_list_of_tuples_equal ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) ==
  (tuple_of_list_of_tuples_equal (xs, ys))
 
 
+
