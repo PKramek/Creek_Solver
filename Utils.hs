@@ -1,4 +1,4 @@
-module Utils(splitWhen, indexes_equal, tuple_of_list_of_tuples_equal) where
+module Utils(splitWhen, indexes_equal, tuple_of_list_of_tuples_equal, uniqueCombinations) where
 
 splitWhen:: (a -> Bool) -> [a] -> ([a], [a])
 splitWhen _ []  = ([],[])
@@ -18,5 +18,8 @@ tuple_of_list_of_tuples_equal (x, []) = False
 tuple_of_list_of_tuples_equal ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) == (snd y) &&
  (tuple_of_list_of_tuples_equal (xs, ys))
 
-
+-- source: https://www.py4u.net/discuss/1984220
+uniqueCombinations 0 _ = [[]]
+uniqueCombinations _ [] = []
+uniqueCombinations n (x : xs) = map (x :) (uniqueCombinations (n - 1) xs) ++ uniqueCombinations n xs
 
