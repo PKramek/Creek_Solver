@@ -1,10 +1,12 @@
 module Board(get_empty_board, change_all_null_values_to_empty, get_index_of_first_empty_field,
  get_indexes_of_neighboring_points, get_indexes_of_empty_neighboring_points,
- set_values_under_indexes_to_value, area_grow, are_empty_fields_creating_single_area) where
+ set_values_under_indexes_to_value, area_grow, are_empty_fields_creating_single_area,
+ getFieldsSurroundingIntersection) where
 
 import Data.Matrix
 import Data.List
 import Constants
+import Creek
 
 get_empty_board:: Int -> Int -> Matrix Int
 get_empty_board height width = matrix height width $ \(i,j) -> nullValueField
@@ -79,3 +81,22 @@ are_empty_fields_creating_single_area matrix = let
   as_list = toList matrix_after_area_grow
   in
     (find (==emptyValueField) as_list) == Nothing
+
+--TODO Simplify x==0 || x==height after testing
+getFieldsSurroundingIntersection:: Matrix a -> ((Int, Int), Int) -> [(Int, Int)]
+getFieldsSurroundingIntersection matrix ((x,y), _) =
+  innerGetSurroundingIntersections (height, width) (x, y)
+  where
+    height = nrows matrix
+    width = ncols matrix
+    innerGetSurroundingIntersections:: (Int, Int) -> (Int, Int) -> [(Int, Int)]
+    innerGetSurroundingIntersections size (x, y)
+      | x == 0      && y == 0       = [(1,1)]
+      | x == height && y == 0       = [(height, 1)]
+      | x == 0      && y == width   = [(1, width)]
+      | x == height && y == width   = [(height, width)]
+      | x == 0                      = [(x+1, y), (x+1, y+1)]
+      | y == 0                      = [(x, y+1), (x+1, y+1)]
+      | x == height                 = [(x, y), (x, y+1)]
+      | y == width                  = [(x, y), (x+1, y)]
+      | otherwise                   = [(x_i, y_i) | x_i <- [x..(x+1)], y_i <- [y..(y+1)]]

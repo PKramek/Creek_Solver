@@ -228,6 +228,89 @@ test_are_empty_fields_creating_single_area_single_channel_matrix = let
   in
     are_empty_fields_creating_single_area single_channel_matrix == True
 
+test_getFieldsSurroundingIntersection_corners:: ([Bool], Bool)
+test_getFieldsSurroundingIntersection_corners = let
+  height = 4
+  width = 4
+  value = 10
+
+  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexes_matrix = fromList height width indexes_list
+
+  first_inter:: ((Int, Int), Int)
+  first_inter = ((0,0),value)
+  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,1)])
+
+  second_inter:: ((Int, Int), Int)
+  second_inter = ((0,4),value)
+  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(1,4)])
+
+
+  third_inter:: ((Int, Int), Int)
+  third_inter = ((4,0),value)
+  third = ((getFieldsSurroundingIntersection indexes_matrix third_inter), [(4,1)])
+
+  fourth_inter:: ((Int, Int), Int)
+  fourth_inter = ((4,4),value)
+  fourth = ((getFieldsSurroundingIntersection indexes_matrix fourth_inter), [(4,4)])
+
+  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth])
+    in
+      (results, (all (==True) results))
+
+test_getFieldsSurroundingIntersection_edges:: ([Bool], Bool)
+test_getFieldsSurroundingIntersection_edges = let
+  height = 4
+  width = 4
+  value = 10
+
+  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexes_matrix = fromList height width indexes_list
+
+  first_inter:: ((Int, Int), Int)
+  first_inter = ((0,2),value)
+  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,2), (1,3)])
+
+  second_inter:: ((Int, Int), Int)
+  second_inter = ((2, 0),value)
+  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(2,1), (3,1)])
+
+  third_inter:: ((Int, Int), Int)
+  third_inter = ((4, 1),value)
+  third = ((getFieldsSurroundingIntersection indexes_matrix third_inter), [(4,1), (4,2)])
+
+  fourth_inter:: ((Int, Int), Int)
+  fourth_inter = ((1, 4),value)
+  fourth = ((getFieldsSurroundingIntersection indexes_matrix fourth_inter), [(1,4), (2,4)])
+
+  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth])
+    in
+      (results, (all (==True) results))
+
+
+test_getFieldsSurroundingIntersection_middle:: ([Bool], Bool)
+test_getFieldsSurroundingIntersection_middle = let
+  height = 4
+  width = 4
+  value = 10
+
+  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexes_matrix = fromList height width indexes_list
+
+  first_inter:: ((Int, Int), Int)
+  first_inter = ((1, 1),value)
+  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,1), (1,2), (2,1), (2,2)])
+
+  second_inter:: ((Int, Int), Int)
+  second_inter = ((3, 3),value)
+  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(3,3), (3,4), (4,3), (4,4)])
+
+  results = (map tuple_of_list_of_tuples_equal [first, second])
+    in
+      (results, (all (==True) results))
+
+
+
 run_all_tests:: ([Bool], Bool)
 run_all_tests = let
   tests = [test_get_index_of_first_empty_or_null_value,
@@ -241,7 +324,10 @@ run_all_tests = let
    test_area_grow_identity,
    test_area_grow_single_channel,
    test_are_empty_fields_creating_single_area_identity_matrix,
-   test_are_empty_fields_creating_single_area_single_channel_matrix
+   test_are_empty_fields_creating_single_area_single_channel_matrix,
+   (snd test_getFieldsSurroundingIntersection_corners),
+   (snd test_getFieldsSurroundingIntersection_edges),
+   (snd test_getFieldsSurroundingIntersection_middle)
    ]
   in
     (tests, (all (==True) tests))
