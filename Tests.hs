@@ -310,6 +310,141 @@ test_getFieldsSurroundingIntersection_middle = let
       (results, (all (==True) results))
 
 
+test_isBoardFilledForIntersection_one_filled:: Bool
+test_isBoardFilledForIntersection_one_filled = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [b, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a]
+        ]
+
+  intersection:: ((Int, Int), Int)
+  intersection = ((0,0), 1)
+  in
+    isBoardFilledForIntersection tested_matrix intersection == True
+
+
+test_isBoardFilledForIntersection_two_filled:: Bool
+test_isBoardFilledForIntersection_two_filled = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, b, b, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a]
+        ]
+
+  intersection:: ((Int, Int), Int)
+  intersection = ((0,2), 2)
+  in
+    isBoardFilledForIntersection tested_matrix intersection == True
+
+
+test_isBoardFilledForIntersection_three_filled:: Bool
+test_isBoardFilledForIntersection_three_filled = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a, a],
+        [a, b, b, a, a],
+        [a, b, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a]
+        ]
+
+  intersection:: ((Int, Int), Int)
+  intersection = ((2,2), 3)
+  in
+    isBoardFilledForIntersection tested_matrix intersection == True
+
+test_isBoardFilledForIntersection_four_filled:: Bool
+test_isBoardFilledForIntersection_four_filled = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a, a],
+        [a, b, b, a, a],
+        [a, b, b, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a]
+        ]
+
+  intersection:: ((Int, Int), Int)
+  intersection = ((2,2), 4)
+  in
+    isBoardFilledForIntersection tested_matrix intersection == True
+
+
+test_isBoardFilledForEveryIntersection_one_intersection:: Bool
+test_isBoardFilledForEveryIntersection_one_intersection = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a, a],
+        [a, b, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, a]
+        ]
+
+  intersection:: ((Int, Int), Int)
+  intersection = ((1,1), 1)
+  in
+    isBoardFilledForEveryIntersection tested_matrix [intersection] == True
+
+test_isBoardFilledForEveryIntersection_three_intersections:: Bool
+test_isBoardFilledForEveryIntersection_three_intersections = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a, a],
+        [a, b, b, a, a],
+        [a, a, b, a, a],
+        [a, a, a, a, a],
+        [a, a, a, a, b]
+        ]
+
+  intersections:: [((Int, Int), Int)]
+  intersections = [((1,2), 2), ((2,3),2), ((5,5),1)]
+  in
+    isBoardFilledForEveryIntersection tested_matrix intersections == True
+
+test_isBoardFilledForEveryIntersection_full_example:: Bool
+test_isBoardFilledForEveryIntersection_full_example = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a],
+        [b, b, b, a],
+        [b, b, a, a],
+        [a, a, a, b]
+        ]
+
+  intersections:: [((Int, Int), Int)]
+  intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
+  in
+    isBoardFilledForEveryIntersection tested_matrix intersections == True
+
 
 run_all_tests:: ([Bool], Bool)
 run_all_tests = let
@@ -327,7 +462,14 @@ run_all_tests = let
    test_are_empty_fields_creating_single_area_single_channel_matrix,
    (snd test_getFieldsSurroundingIntersection_corners),
    (snd test_getFieldsSurroundingIntersection_edges),
-   (snd test_getFieldsSurroundingIntersection_middle)
+   (snd test_getFieldsSurroundingIntersection_middle),
+   test_isBoardFilledForIntersection_one_filled,
+   test_isBoardFilledForIntersection_two_filled,
+   test_isBoardFilledForIntersection_three_filled,
+   test_isBoardFilledForIntersection_four_filled,
+   test_isBoardFilledForEveryIntersection_one_intersection,
+   test_isBoardFilledForEveryIntersection_three_intersections,
+   test_isBoardFilledForEveryIntersection_full_example
    ]
   in
     (tests, (all (==True) tests))
