@@ -1,4 +1,8 @@
-module Constants(emptyValueField, filledValueField, testValueField) where
+module Constants(
+  emptyValueField,
+  filledValueField,
+  testValueField
+) where
 
 emptyValueField:: Int
 emptyValueField = 0

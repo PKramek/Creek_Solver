@@ -1,3 +1,7 @@
+module Tests(
+  run_all_tests
+) where
+
 import Creek
 import Board
 import Constants
@@ -41,7 +45,6 @@ test_get_indexes_of_neighboring_points = let
   in
     (results, (all (==True) results))
 
-
 test_get_indexes_of_empty_neighboring_points_all_empty_fields::([Bool], Bool)
 test_get_indexes_of_empty_neighboring_points_all_empty_fields = let
   num_rows = 5
@@ -67,7 +70,6 @@ test_get_indexes_of_empty_neighboring_points_all_empty_fields = let
   results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth, fifth, sixth, seventh])
   in
     (results, (all (==True) results))
-
 
 test_set_values_under_indexes_to_test_value_all_indexes::Bool
 test_set_values_under_indexes_to_test_value_all_indexes = let
@@ -125,7 +127,6 @@ test_area_grow_split_in_two = let
     output_matrix = area_grow (1, 1) split_in_two_matrix
   in
     output_matrix == expected_output
-
 
 test_area_grow_identity:: Bool
 test_area_grow_identity = let
@@ -268,7 +269,6 @@ test_getFieldsSurroundingIntersection_edges = let
     in
       (results, (all (==True) results))
 
-
 test_getFieldsSurroundingIntersection_middle:: ([Bool], Bool)
 test_getFieldsSurroundingIntersection_middle = let
   height = 4
@@ -290,7 +290,6 @@ test_getFieldsSurroundingIntersection_middle = let
     in
       (results, (all (==True) results))
 
-
 test_isBoardFilledForIntersection_one_filled:: Bool
 test_isBoardFilledForIntersection_one_filled = let
   a = emptyValueField
@@ -310,7 +309,6 @@ test_isBoardFilledForIntersection_one_filled = let
   in
     isBoardFilledForIntersection tested_matrix intersection == True
 
-
 test_isBoardFilledForIntersection_two_filled:: Bool
 test_isBoardFilledForIntersection_two_filled = let
   a = emptyValueField
@@ -329,7 +327,6 @@ test_isBoardFilledForIntersection_two_filled = let
   intersection = ((0,2), 2)
   in
     isBoardFilledForIntersection tested_matrix intersection == True
-
 
 test_isBoardFilledForIntersection_three_filled:: Bool
 test_isBoardFilledForIntersection_three_filled = let
@@ -368,7 +365,6 @@ test_isBoardFilledForIntersection_four_filled = let
   intersection = ((2,2), 4)
   in
     isBoardFilledForIntersection tested_matrix intersection == True
-
 
 test_isBoardFilledForEveryIntersection_one_intersection:: Bool
 test_isBoardFilledForEveryIntersection_one_intersection = let
@@ -426,7 +422,6 @@ test_isBoardFilledForEveryIntersection_full_example = let
   in
     isBoardFilledForEveryIntersection tested_matrix intersections == True
 
-
 test_isValidSolution_full_example::Bool
 test_isValidSolution_full_example = let
   a = emptyValueField
@@ -467,8 +462,6 @@ test_solve_full_example = let
 
   in
     expected_output == solution
-
-
 
 
 run_all_tests:: ([Bool], Bool)

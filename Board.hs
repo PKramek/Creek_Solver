@@ -25,9 +25,15 @@ import Utils
 get_empty_board:: Int -> Int -> Matrix Int
 get_empty_board height width = matrix height width $ \(i,j) -> emptyValueField
 
-getIndexFromMaybe:: Maybe a -> a
-getIndexFromMaybe Nothing = error "Index not found"
-getIndexFromMaybe (Just index) = index
+get_value_under_index:: (Int, Int) -> Matrix Int -> Int
+get_value_under_index index board = board ! (index)
+
+get_values_under_indexes:: [(Int, Int) ]-> Matrix Int -> [Int]
+get_values_under_indexes indexes board = map (\index -> get_value_under_index index board) indexes
+
+set_values_under_indexes_to_value:: Matrix Int -> [(Int, Int)] -> Int -> Matrix Int
+set_values_under_indexes_to_value matrix [] value= matrix
+set_values_under_indexes_to_value matrix (index:xs) value = set_values_under_indexes_to_value (setElem value index matrix) xs value
 
 get_index_of_first_empty_field:: Matrix Int -> (Int, Int)
 get_index_of_first_empty_field matrix =let
@@ -40,6 +46,10 @@ get_index_of_first_empty_field matrix =let
     column = index_in_list `mod` num_columns
   in
     (row + 1, column + 1)
+
+getIndexFromMaybe:: Maybe a -> a
+getIndexFromMaybe Nothing = error "Index not found"
+getIndexFromMaybe (Just index) = index
 
 get_indexes_of_neighboring_points:: (Int, Int) -> Int -> Int -> [(Int, Int)]
 get_indexes_of_neighboring_points (row, col) num_columns num_rows =
@@ -56,15 +66,18 @@ get_indexes_of_empty_neighboring_points (row, col) matrix num_columns num_rows =
   in
     [index | (value, index) <- values_indexes_pairs, value == emptyValueField]
 
-get_value_under_index:: (Int, Int) -> Matrix Int -> Int
-get_value_under_index index board = board ! (index)
+isValidSolution:: Matrix Int -> [((Int, Int), Int)] -> Bool
+isValidSolution matrix intersections =
+  (isBoardFilledForEveryIntersection matrix intersections) && (are_empty_fields_creating_single_area matrix)
 
-get_values_under_indexes:: [(Int, Int) ]-> Matrix Int -> [Int]
-get_values_under_indexes indexes board = map (\index -> get_value_under_index index board) indexes
 
-set_values_under_indexes_to_value:: Matrix Int -> [(Int, Int)] -> Int -> Matrix Int
-set_values_under_indexes_to_value matrix [] value= matrix
-set_values_under_indexes_to_value matrix (index:xs) value = set_values_under_indexes_to_value (setElem value index matrix) xs value
+are_empty_fields_creating_single_area:: Matrix Int -> Bool
+are_empty_fields_creating_single_area matrix = let
+  area_seed = get_index_of_first_empty_field matrix
+  matrix_after_area_grow = area_grow area_seed matrix
+  as_list = toList matrix_after_area_grow
+  in
+    (find (==emptyValueField) as_list) == Nothing
 
 area_grow:: (Int, Int)-> Matrix Int -> Matrix Int
 area_grow seed_index matrix = let
@@ -88,13 +101,19 @@ area_grow_recurrent seeds matrix num_columns num_rows = let
   in
     area_grow_recurrent (remaining_seeds ++ empty_neighbours_indexes) modified_matrix num_columns num_rows
 
-are_empty_fields_creating_single_area:: Matrix Int -> Bool
-are_empty_fields_creating_single_area matrix = let
-  area_seed = get_index_of_first_empty_field matrix
-  matrix_after_area_grow = area_grow area_seed matrix
-  as_list = toList matrix_after_area_grow
+
+isBoardFilledForIntersection:: Matrix Int -> ((Int, Int), Int) -> Bool
+isBoardFilledForIntersection matrix ((x,y), value) =
+  let
+    indexes_of_neighbouring_fields = getFieldsSurroundingIntersection matrix ((x,y), value)
+    neighbouring_values = get_values_under_indexes indexes_of_neighbouring_fields matrix
+    num_of_filled_values = length (filter (==filledValueField) neighbouring_values)
   in
-    (find (==emptyValueField) as_list) == Nothing
+    value == num_of_filled_values
+
+isBoardFilledForEveryIntersection :: Matrix Int -> [((Int, Int), Int)] -> Bool
+isBoardFilledForEveryIntersection matrix intersections =
+  all (==True) (map (\intersection ->  isBoardFilledForIntersection matrix intersection) intersections)
 
 getFieldsSurroundingIntersection:: Matrix a -> ((Int, Int), Int) -> [(Int, Int)]
 getFieldsSurroundingIntersection matrix ((x,y), _) =
@@ -115,25 +134,6 @@ getFieldsSurroundingIntersection matrix ((x,y), _) =
       | y == width                  = [(x, y), (x+1, y)]
       | otherwise                   = [(x_i, y_i) | x_i <- [x..(x+1)], y_i <- [y..(y+1)]]
 
-
-isBoardFilledForIntersection:: Matrix Int -> ((Int, Int), Int) -> Bool
-isBoardFilledForIntersection matrix ((x,y), value) =
-  let
-    indexes_of_neighbouring_fields = getFieldsSurroundingIntersection matrix ((x,y), value)
-    neighbouring_values = get_values_under_indexes indexes_of_neighbouring_fields matrix
-    num_of_filled_values = length (filter (==filledValueField) neighbouring_values)
-  in
-    value == num_of_filled_values
-
-isBoardFilledForEveryIntersection :: Matrix Int -> [((Int, Int), Int)] -> Bool
-isBoardFilledForEveryIntersection matrix intersections =
-  all (==True) (map (\intersection ->  isBoardFilledForIntersection matrix intersection) intersections)
-
-isValidSolution:: Matrix Int -> [((Int, Int), Int)] -> Bool
-isValidSolution matrix intersections =
-  (isBoardFilledForEveryIntersection matrix intersections) && (are_empty_fields_creating_single_area matrix)
-
-
 solve:: Matrix Int -> [((Int, Int), Int)] -> [((Int, Int), Int)] -> Maybe(Matrix Int)
 solve matrix [] processed_intersections
   | isValidSolution matrix processed_intersections == True  = Just matrix
@@ -150,4 +150,5 @@ solve matrix (intersection:intersections) processed_intersections =
     satisfy_condition = (\solution -> not (isNothing solution))
   in
     extractMaybeMatrix (firstSatisfying satisfy_condition (map (solve_transform) every_possible_board))
+
 
