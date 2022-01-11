@@ -1,7 +1,7 @@
 module Utils(
   splitWhen,
-  indexes_equal,
-  tuple_of_list_of_tuples_equal,
+  indexesEqual,
+  tupleOfListOfTuplesEqual,
   uniqueCombinations,
   firstSatisfying,
   extractMaybeMatrix
@@ -17,15 +17,15 @@ splitWhen f xs = helperSplit f [] xs
     helperSplit f acc (x:xs)  | f x == False = helperSplit f (acc ++ [x]) xs
                               | otherwise = (acc, (x:xs))
 
-indexes_equal::Eq a => ((a, a), (a, a)) -> Bool
-indexes_equal ((a,b), (c, d)) = a == c && b == d
+indexesEqual::Eq a => ((a, a), (a, a)) -> Bool
+indexesEqual ((a,b), (c, d)) = a == c && b == d
 
-tuple_of_list_of_tuples_equal:: ([(Int, Int)], [(Int, Int)]) -> Bool
-tuple_of_list_of_tuples_equal ([],[]) = True
-tuple_of_list_of_tuples_equal ([], y) = False
-tuple_of_list_of_tuples_equal (x, []) = False
-tuple_of_list_of_tuples_equal ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) == (snd y) &&
- (tuple_of_list_of_tuples_equal (xs, ys))
+tupleOfListOfTuplesEqual:: ([(Int, Int)], [(Int, Int)]) -> Bool
+tupleOfListOfTuplesEqual ([],[]) = True
+tupleOfListOfTuplesEqual ([], y) = False
+tupleOfListOfTuplesEqual (x, []) = False
+tupleOfListOfTuplesEqual ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) == (snd y) &&
+ (tupleOfListOfTuplesEqual (xs, ys))
 
 -- source: https://www.py4u.net/discuss/1984220
 uniqueCombinations:: (Eq t, Num t) => t -> [a] -> [[a]]

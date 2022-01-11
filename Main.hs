@@ -11,7 +11,7 @@ creek = read input :: Creek
 solveCreek:: Creek -> Maybe(Matrix Int)
 solveCreek creek = let
   (height, width) = getSize creek
-  board = get_empty_board height width
+  board = getEmptyBoard height width
   sortedIntersections = getIntersectionsSortedByDigitDesc creek
   in
     solve board sortedIntersections []

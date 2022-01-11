@@ -1,14 +1,14 @@
 module Board(
-  get_empty_board,
-  get_index_of_first_empty_field,
-  get_indexes_of_neighboring_points,
-  get_indexes_of_empty_neighboring_points,
-  set_values_under_indexes_to_value,
-  area_grow,
-  are_empty_fields_creating_single_area,
+  getEmptyBoard,
+  getIndexOfFirstEmptyField,
+  getIndexesOfNeighboringPoints,
+  getIndexesOfEmptyNeighboringPoints,
+  setValuesUnderIndexesToValue,
+  areaGrow,
+  areEmptyFieldsCreatingSingleArea,
   getFieldsSurroundingIntersection,
-  get_value_under_index,
-  get_values_under_indexes,
+  getValueUnderIndex,
+  getValuesUnderIndexes,
   isBoardFilledForIntersection,
   isBoardFilledForEveryIntersection,
   isValidSolution,
@@ -22,94 +22,95 @@ import Constants
 import Creek
 import Utils
 
-get_empty_board:: Int -> Int -> Matrix Int
-get_empty_board height width = matrix height width $ \(i,j) -> emptyValueField
+getEmptyBoard:: Int -> Int -> Matrix Int
+getEmptyBoard height width = matrix height width $ \(i,j) -> emptyValueField
 
-get_value_under_index:: (Int, Int) -> Matrix Int -> Int
-get_value_under_index index board = board ! (index)
+getValueUnderIndex:: (Int, Int) -> Matrix Int -> Int
+getValueUnderIndex index board = board ! (index)
 
-get_values_under_indexes:: [(Int, Int) ]-> Matrix Int -> [Int]
-get_values_under_indexes indexes board = map (\index -> get_value_under_index index board) indexes
+getValuesUnderIndexes:: [(Int, Int) ]-> Matrix Int -> [Int]
+getValuesUnderIndexes indexes board = map (\index -> getValueUnderIndex index board) indexes
 
-set_values_under_indexes_to_value:: Matrix Int -> [(Int, Int)] -> Int -> Matrix Int
-set_values_under_indexes_to_value matrix [] value= matrix
-set_values_under_indexes_to_value matrix (index:xs) value = set_values_under_indexes_to_value (setElem value index matrix) xs value
+setValuesUnderIndexesToValue:: Matrix Int -> [(Int, Int)] -> Int -> Matrix Int
+setValuesUnderIndexesToValue matrix [] value= matrix
+setValuesUnderIndexesToValue matrix (index:xs) value = setValuesUnderIndexesToValue (setElem value index matrix) xs value
 
-get_index_of_first_empty_field:: Matrix Int -> (Int, Int)
-get_index_of_first_empty_field matrix =let
-    num_columns = fromIntegral (ncols matrix)
-    num_rows = fromIntegral (nrows matrix)
-    matrix_as_list = toList matrix
-    index_in_list = fromIntegral (getIndexFromMaybe (elemIndex emptyValueField matrix_as_list))
+getIndexOfFirstEmptyField:: Matrix Int -> (Int, Int)
+getIndexOfFirstEmptyField matrix =let
+    numColumns = fromIntegral (ncols matrix)
+    numRows = fromIntegral (nrows matrix)
+    matrixAsList = toList matrix
+    indexInList = fromIntegral (getIndexFromMaybe (elemIndex emptyValueField matrixAsList))
 
-    row = index_in_list `div` num_rows
-    column = index_in_list `mod` num_columns
+    row = indexInList `div` numRows
+    column = indexInList `mod` numColumns
   in
+--  Indexes in matrix start at 1, not 0
     (row + 1, column + 1)
 
 getIndexFromMaybe:: Maybe a -> a
 getIndexFromMaybe Nothing = error "Index not found"
 getIndexFromMaybe (Just index) = index
 
-get_indexes_of_neighboring_points:: (Int, Int) -> Int -> Int -> [(Int, Int)]
-get_indexes_of_neighboring_points (row, col) num_columns num_rows =
+getIndexesOfNeighboringPoints:: (Int, Int) -> Int -> Int -> [(Int, Int)]
+getIndexesOfNeighboringPoints (row, col) numColumns numRows =
   let
-    connected_points = [(row, col-1), (row, col+1), (row-1, col), (row+1, col)]
+    connectedPoints = [(row, col-1), (row, col+1), (row-1, col), (row+1, col)]
   in
-    filter (\(c, r) -> c >= 1 && r >= 1 && c <= num_columns && r <= num_rows) connected_points
+    filter (\(c, r) -> c >= 1 && r >= 1 && c <= numColumns && r <= numRows) connectedPoints
 
-get_indexes_of_empty_neighboring_points:: (Int, Int) -> Matrix Int -> Int -> Int -> [(Int, Int)]
-get_indexes_of_empty_neighboring_points (row, col) matrix num_columns num_rows =
+getIndexesOfEmptyNeighboringPoints:: (Int, Int) -> Matrix Int -> Int -> Int -> [(Int, Int)]
+getIndexesOfEmptyNeighboringPoints (row, col) matrix numColumns numRows =
   let
-    neighboring_points = get_indexes_of_neighboring_points (row, col) num_columns num_rows
-    values_indexes_pairs = [((matrix ! index), index) |  index <- neighboring_points]
+    neighboringPoints = getIndexesOfNeighboringPoints (row, col) numColumns numRows
+    valuesIndexesPairs = [((matrix ! index), index) |  index <- neighboringPoints]
   in
-    [index | (value, index) <- values_indexes_pairs, value == emptyValueField]
+    [index | (value, index) <- valuesIndexesPairs, value == emptyValueField]
 
 isValidSolution:: Matrix Int -> [((Int, Int), Int)] -> Bool
 isValidSolution matrix intersections =
-  (isBoardFilledForEveryIntersection matrix intersections) && (are_empty_fields_creating_single_area matrix)
+  (isBoardFilledForEveryIntersection matrix intersections) && (areEmptyFieldsCreatingSingleArea matrix)
 
 
-are_empty_fields_creating_single_area:: Matrix Int -> Bool
-are_empty_fields_creating_single_area matrix = let
-  area_seed = get_index_of_first_empty_field matrix
-  matrix_after_area_grow = area_grow area_seed matrix
-  as_list = toList matrix_after_area_grow
+areEmptyFieldsCreatingSingleArea:: Matrix Int -> Bool
+areEmptyFieldsCreatingSingleArea matrix = let
+  areaSeed = getIndexOfFirstEmptyField matrix
+  matrixAfterAreaGrow = areaGrow areaSeed matrix
+  asList = toList matrixAfterAreaGrow
   in
-    (find (==emptyValueField) as_list) == Nothing
+    (find (==emptyValueField) asList) == Nothing
 
-area_grow:: (Int, Int)-> Matrix Int -> Matrix Int
-area_grow seed_index matrix = let
-    num_columns = fromIntegral (ncols matrix)
-    num_rows = fromIntegral (nrows matrix)
-    tested_matrix = setElem testValueField seed_index matrix
+areaGrow:: (Int, Int)-> Matrix Int -> Matrix Int
+areaGrow seedIndex matrix = let
+    numColumns = fromIntegral (ncols matrix)
+    numRows = fromIntegral (nrows matrix)
+    testedMatrix = setElem testValueField seedIndex matrix
   in
-    if (matrix ! seed_index) == filledValueField
+    if (matrix ! seedIndex) == filledValueField
       then error "Can`t start with that index, because there is filled value there"
     else
-      area_grow_recurrent [seed_index] tested_matrix num_columns num_rows
+      areaGrowRecurrent [seedIndex] testedMatrix numColumns numRows
 
 
-area_grow_recurrent:: [(Int, Int)] -> Matrix Int -> Int -> Int -> Matrix Int
-area_grow_recurrent [] matrix num_columns num_rows = matrix
-area_grow_recurrent seeds matrix num_columns num_rows = let
+areaGrowRecurrent:: [(Int, Int)] -> Matrix Int -> Int -> Int -> Matrix Int
+areaGrowRecurrent [] matrix numColumns numRows = matrix
+areaGrowRecurrent seeds matrix numColumns numRows = let
     seed = head seeds
-    remaining_seeds = tail seeds
-    empty_neighbours_indexes = get_indexes_of_empty_neighboring_points seed matrix num_columns num_rows
-    modified_matrix = set_values_under_indexes_to_value matrix empty_neighbours_indexes testValueField
+    remainingSeeds = tail seeds
+    emptyNeighboursIndexes = getIndexesOfEmptyNeighboringPoints seed matrix numColumns numRows
+    modifiedMatrix = setValuesUnderIndexesToValue matrix emptyNeighboursIndexes testValueField
   in
-    area_grow_recurrent (remaining_seeds ++ empty_neighbours_indexes) modified_matrix num_columns num_rows
+    areaGrowRecurrent (remainingSeeds ++ emptyNeighboursIndexes) modifiedMatrix numColumns numRows
 
 
 isBoardFilledForIntersection:: Matrix Int -> ((Int, Int), Int) -> Bool
 isBoardFilledForIntersection matrix ((x,y), value) =
   let
-    indexes_of_neighbouring_fields = getFieldsSurroundingIntersection matrix ((x,y), value)
-    neighbouring_values = get_values_under_indexes indexes_of_neighbouring_fields matrix
-    num_of_filled_values = length (filter (==filledValueField) neighbouring_values)
+    indexesOfNeighbouringFields = getFieldsSurroundingIntersection matrix ((x,y), value)
+    neighbouringValues = getValuesUnderIndexes indexesOfNeighbouringFields matrix
+    numOfFilledValues = length (filter (==filledValueField) neighbouringValues)
   in
-    value == num_of_filled_values
+    value == numOfFilledValues
 
 isBoardFilledForEveryIntersection :: Matrix Int -> [((Int, Int), Int)] -> Bool
 isBoardFilledForEveryIntersection matrix intersections =
@@ -132,23 +133,23 @@ getFieldsSurroundingIntersection matrix ((x,y), _) =
       | y == 0                      = [(x, y+1), (x+1, y+1)]
       | x == height                 = [(x, y), (x, y+1)]
       | y == width                  = [(x, y), (x+1, y)]
-      | otherwise                   = [(x_i, y_i) | x_i <- [x..(x+1)], y_i <- [y..(y+1)]]
+      | otherwise                   = [(xI, yI) | xI <- [x..(x+1)], yI <- [y..(y+1)]]
 
 solve:: Matrix Int -> [((Int, Int), Int)] -> [((Int, Int), Int)] -> Maybe(Matrix Int)
-solve matrix [] processed_intersections
-  | isValidSolution matrix processed_intersections == True  = Just matrix
+solve matrix [] processedIntersections
+  | isValidSolution matrix processedIntersections == True  = Just matrix
   | otherwise                                               = Nothing
-solve matrix (intersection:intersections) processed_intersections =
+solve matrix (intersection:intersections) processedIntersections =
   let
     (_, value) = intersection
-    fields_around_intersection = getFieldsSurroundingIntersection matrix intersection
-    possible_moves = uniqueCombinations value fields_around_intersection
-    every_possible_board = map(\moves -> set_values_under_indexes_to_value matrix moves filledValueField) possible_moves
+    fieldsAroundIntersection = getFieldsSurroundingIntersection matrix intersection
+    possibleMoves = uniqueCombinations value fieldsAroundIntersection
+    everyPossibleBoard = map(\moves -> setValuesUnderIndexesToValue matrix moves filledValueField) possibleMoves
 
-    solve_transform =
-      (\transformed_board -> solve transformed_board intersections (intersection:processed_intersections))
-    satisfy_condition = (\solution -> not (isNothing solution))
+    solveTransform =
+      (\transformedBoard -> solve transformedBoard intersections (intersection:processedIntersections))
+    satisfyCondition = (\solution -> not (isNothing solution))
   in
-    extractMaybeMatrix (firstSatisfying satisfy_condition (map (solve_transform) every_possible_board))
+    extractMaybeMatrix (firstSatisfying satisfyCondition (map (solveTransform) everyPossibleBoard))
 
 
