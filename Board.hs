@@ -1,13 +1,18 @@
-module Board(get_empty_board, change_all_null_values_to_empty, get_index_of_first_empty_field,
- get_indexes_of_neighboring_points, get_indexes_of_empty_neighboring_points,
- set_values_under_indexes_to_value, area_grow, are_empty_fields_creating_single_area,
- getFieldsSurroundingIntersection,
- get_value_under_index,
- get_values_under_indexes,
- isBoardFilledForIntersection,
- isBoardFilledForEveryIntersection,
- isValidSolution,
- solve
+module Board(
+  get_empty_board,
+  get_index_of_first_empty_field,
+  get_indexes_of_neighboring_points,
+  get_indexes_of_empty_neighboring_points,
+  set_values_under_indexes_to_value,
+  area_grow,
+  are_empty_fields_creating_single_area,
+  getFieldsSurroundingIntersection,
+  get_value_under_index,
+  get_values_under_indexes,
+  isBoardFilledForIntersection,
+  isBoardFilledForEveryIntersection,
+  isValidSolution,
+  solve
  ) where
 
 import Data.Matrix
@@ -20,9 +25,6 @@ import Utils
 get_empty_board:: Int -> Int -> Matrix Int
 get_empty_board height width = matrix height width $ \(i,j) -> emptyValueField
 
-change_all_null_values_to_empty:: Matrix Int -> Matrix Int
-change_all_null_values_to_empty matrix = (mapPos (\(r,c) a -> if a == nullValueField then emptyValueField else a) matrix)
-
 getIndexFromMaybe:: Maybe a -> a
 getIndexFromMaybe Nothing = error "Index not found"
 getIndexFromMaybe (Just index) = index
@@ -31,14 +33,12 @@ get_index_of_first_empty_field:: Matrix Int -> (Int, Int)
 get_index_of_first_empty_field matrix =let
     num_columns = fromIntegral (ncols matrix)
     num_rows = fromIntegral (nrows matrix)
-    not_null_matrix = change_all_null_values_to_empty matrix
-    matrix_as_list = toList not_null_matrix
+    matrix_as_list = toList matrix
     index_in_list = fromIntegral (getIndexFromMaybe (elemIndex emptyValueField matrix_as_list))
 
     row = index_in_list `div` num_rows
     column = index_in_list `mod` num_columns
   in
---   One is added because in Haskell matrices are indexed from 1
     (row + 1, column + 1)
 
 get_indexes_of_neighboring_points:: (Int, Int) -> Int -> Int -> [(Int, Int)]
@@ -136,7 +136,7 @@ isValidSolution matrix intersections =
 
 solve:: Matrix Int -> [((Int, Int), Int)] -> [((Int, Int), Int)] -> Maybe(Matrix Int)
 solve matrix [] processed_intersections
-  | isValidSolution matrix processed_intersections == True  = Just (change_all_null_values_to_empty matrix)
+  | isValidSolution matrix processed_intersections == True  = Just matrix
   | otherwise                                               = Nothing
 solve matrix (intersection:intersections) processed_intersections =
   let

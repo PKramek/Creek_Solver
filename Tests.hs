@@ -5,8 +5,8 @@ import Utils
 
 import Data.Matrix
 
-test_get_index_of_first_empty_or_null_value:: Bool
-test_get_index_of_first_empty_or_null_value = let
+test_get_index_of_first_empty_value:: Bool
+test_get_index_of_first_empty_value = let
     num_cols = 20
     num_rows = 20
     test_matrix = fromList num_rows num_cols (repeat testValueField)
@@ -47,7 +47,7 @@ test_get_indexes_of_empty_neighboring_points_all_empty_fields = let
   num_rows = 5
   num_cols = 5
   empty_board:: Matrix Int
-  empty_board = change_all_null_values_to_empty (get_empty_board num_rows num_cols)
+  empty_board = get_empty_board num_rows num_cols
 
 --  For point (1,1) it should return [(1,2),(2,1)]
   first = ((get_indexes_of_empty_neighboring_points (1,1) empty_board num_cols num_rows), [(1,2), (2,1)])
@@ -473,30 +473,30 @@ test_solve_full_example = let
 
 run_all_tests:: ([Bool], Bool)
 run_all_tests = let
-  tests = [test_get_index_of_first_empty_or_null_value,
-   (snd test_get_indexes_of_neighboring_points),
-   (snd test_get_indexes_of_empty_neighboring_points_all_empty_fields),
-   test_set_values_under_indexes_to_test_value_all_indexes,
-   test_set_values_under_indexes_to_test_value_no_indexes,
-   test_area_grow_empty_board,
-   test_area_grow_split_in_two,
-   test_area_grow_identity,
-   test_area_grow_single_channel,
-   test_are_empty_fields_creating_single_area_identity_matrix,
-   test_are_empty_fields_creating_single_area_single_channel_matrix,
-   (snd test_getFieldsSurroundingIntersection_corners),
-   (snd test_getFieldsSurroundingIntersection_edges),
-   (snd test_getFieldsSurroundingIntersection_middle),
-   test_isBoardFilledForIntersection_one_filled,
-   test_isBoardFilledForIntersection_two_filled,
-   test_isBoardFilledForIntersection_three_filled,
-   test_isBoardFilledForIntersection_four_filled,
-   test_isBoardFilledForEveryIntersection_one_intersection,
-   test_isBoardFilledForEveryIntersection_three_intersections,
-   test_isBoardFilledForEveryIntersection_full_example,
-   test_isValidSolution_full_example,
-   test_isValidSolution_full_example,
-   test_solve_full_example
-   ]
+  tests = [
+    test_get_index_of_first_empty_value,
+    (snd test_get_indexes_of_neighboring_points),
+    (snd test_get_indexes_of_empty_neighboring_points_all_empty_fields),
+    test_set_values_under_indexes_to_test_value_all_indexes,
+    test_set_values_under_indexes_to_test_value_no_indexes,
+    test_area_grow_empty_board,
+    test_area_grow_split_in_two,
+    test_area_grow_identity,
+    test_area_grow_single_channel,
+    test_are_empty_fields_creating_single_area_identity_matrix,
+    test_are_empty_fields_creating_single_area_single_channel_matrix,
+    (snd test_getFieldsSurroundingIntersection_corners),
+    (snd test_getFieldsSurroundingIntersection_edges),
+    (snd test_getFieldsSurroundingIntersection_middle),
+    test_isBoardFilledForIntersection_one_filled,
+    test_isBoardFilledForIntersection_two_filled,
+    test_isBoardFilledForIntersection_three_filled,
+    test_isBoardFilledForIntersection_four_filled,
+    test_isBoardFilledForEveryIntersection_one_intersection,
+    test_isBoardFilledForEveryIntersection_three_intersections,
+    test_isBoardFilledForEveryIntersection_full_example,
+    test_isValidSolution_full_example,
+    test_isValidSolution_full_example,
+    test_solve_full_example]
   in
     (tests, (all (==True) tests))
