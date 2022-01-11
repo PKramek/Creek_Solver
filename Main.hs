@@ -5,8 +5,8 @@ import Utils
 import Data.Maybe
 import Data.Matrix
 
-input = "Creek (4, 4) [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]"
-creek = read input :: Creek
+--input = "Creek (4, 4) [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]"
+--creek = read input :: Creek
 
 solveCreek:: Creek -> Maybe(Matrix Int)
 solveCreek creek = let
@@ -16,7 +16,7 @@ solveCreek creek = let
   in
     solve board sortedIntersections []
 
---solveAndReport :: Creek -> IO ()
+solveAndReport :: Creek -> IO ()
 solveAndReport creek =
     case solveCreek creek of
       Nothing -> do
@@ -24,3 +24,7 @@ solveAndReport creek =
       (Just solution) -> do
         putStrLn "Solution:"
         print solution
+
+main = do
+  creek <- fromFile
+  solveAndReport creek
