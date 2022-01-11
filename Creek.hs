@@ -1,7 +1,14 @@
-module Creek(Creek, fromStdInput, fromFile, getSize, getHeight, getWidth, getIntersections,
-             getIntersectionsSortedByDigitAsc, getIntersectionsSortedByDigitDesc,
-              getCreekSortedByIntersectionNumber
-              ) where
+module Creek(
+  Creek,
+  fromStdInput,
+  fromFile,
+  getSize,
+  getHeight,
+  getWidth,
+  getIntersections,
+  getIntersectionsSortedByDigitAsc,
+  getIntersectionsSortedByDigitDesc
+) where
 
 import Utils
 import Data.Function (on)
@@ -12,8 +19,8 @@ data Creek = Creek (Int, Int) [((Int, Int), Int)] deriving (Read, Show)
 fromStdInput :: IO Creek
 fromStdInput = do
   putStr "Serialized creek: "
-  serialized_creek <- getLine
-  let creek = read serialized_creek:: Creek
+  serializedCreek <- getLine
+  let creek = read serializedCreek:: Creek
 
   return creek
 
@@ -21,8 +28,10 @@ fromFile :: IO Creek
 fromFile = do
   putStr "Path to file containing serialized creek: "
   path <- getLine
-  serialized_creek <- readFile path
-  let creek = read serialized_creek:: Creek
+  serializedCreek <- readFile path
+  let creek = read serializedCreek:: Creek
+
+  putStrLn ("File contained creek: " ++ (show creek))
 
   return creek
 
@@ -43,7 +52,3 @@ getIntersectionsSortedByDigitAsc (Creek _ fields) = sortBy (compare `on` snd) fi
 
 getIntersectionsSortedByDigitDesc:: Creek -> [((Int, Int), Int)]
 getIntersectionsSortedByDigitDesc creek = reverse (getIntersectionsSortedByDigitAsc creek)
-
-getCreekSortedByIntersectionNumber :: Creek -> Creek
-getCreekSortedByIntersectionNumber not_sorted =
-    Creek (getSize not_sorted) (getIntersectionsSortedByDigitDesc not_sorted)

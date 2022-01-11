@@ -1,3 +1,7 @@
+module Tests(
+  runAllTests
+) where
+
 import Creek
 import Board
 import Constants
@@ -5,144 +9,127 @@ import Utils
 
 import Data.Matrix
 
-test_get_index_of_first_empty_or_null_value:: Bool
-test_get_index_of_first_empty_or_null_value = let
-    num_cols = 20
-    num_rows = 20
-    test_matrix = fromList num_rows num_cols (repeat testValueField)
+testGetIndexOfFirstEmptyValue:: Bool
+testGetIndexOfFirstEmptyValue = let
+    numCols = 20
+    numRows = 20
+    testMatrix = fromList numRows numCols (repeat testValueField)
 
     indexes:: [((Int, Int), (Int, Int))]
-    indexes = [(get_index_of_first_empty_field (setElem emptyValueField (row, col) test_matrix), (row,col)) |
-              row <- [1..num_rows], col <- [1..num_cols]]
+    indexes = [(getIndexOfFirstEmptyField (setElem emptyValueField (row, col) testMatrix), (row,col)) |
+              row <- [1..numRows], col <- [1..numCols]]
   in
-    all (==True) (map indexes_equal indexes)
+    all (==True) (map indexesEqual indexes)
 
-test_get_indexes_of_neighboring_points:: ([Bool], Bool)
-test_get_indexes_of_neighboring_points = let
-  num_rows = 5
-  num_cols = 5
+testGetIndexesOfNeighboringPoints:: ([Bool], Bool)
+testGetIndexesOfNeighboringPoints = let
+  numRows = 5
+  numCols = 5
 
-  --For point (1,1) it should return [(1,2),(2,1)]
-  first = ((get_indexes_of_neighboring_points (1,1) num_cols num_rows), [(1,2), (2,1)])
-  --For point (1,5) it should return [(1,2),(2,1)]
-  second = ((get_indexes_of_neighboring_points (1,5) num_cols num_rows), [(1,4), (2,5)])
-  --For point (5,1) it should return [(5,2), (1,4)]
-  third = ((get_indexes_of_neighboring_points (5,1) num_cols num_rows), [(5,2), (4,1)])
-  --For point (5,5) it should return [(5,4), (4,5)]
-  fourth = ((get_indexes_of_neighboring_points (5,5) num_cols num_rows), [(5,4), (4,5)])
-  --For point (3,1) it should return [(3,2), (2,1), (4,1)]
-  fifth = ((get_indexes_of_neighboring_points (3,1) num_cols num_rows), [(3,2), (2,1), (4,1)])
-  --For point (1, 3) it should return [(1,2), (1,4), (2,3)]
-  sixth = ((get_indexes_of_neighboring_points (1,3) num_cols num_rows), [(1,2), (1,4), (2,3)])
-  --For point (3, 3) it should return [(3,2), (3,4), (2,3), (4,3)]
-  seventh = ((get_indexes_of_neighboring_points (3,3) num_cols num_rows), [(3,2), (3,4), (2,3), (4,3)])
+--Tuple of lists structure: (<result>, <expected_result>)
+  first = ((getIndexesOfNeighboringPoints (1,1) numCols numRows), [(1,2), (2,1)])
+  second = ((getIndexesOfNeighboringPoints (1,5) numCols numRows), [(1,4), (2,5)])
+  third = ((getIndexesOfNeighboringPoints (5,1) numCols numRows), [(5,2), (4,1)])
+  fourth = ((getIndexesOfNeighboringPoints (5,5) numCols numRows), [(5,4), (4,5)])
+  fifth = ((getIndexesOfNeighboringPoints (3,1) numCols numRows), [(3,2), (2,1), (4,1)])
+  sixth = ((getIndexesOfNeighboringPoints (1,3) numCols numRows), [(1,2), (1,4), (2,3)])
+  seventh = ((getIndexesOfNeighboringPoints (3,3) numCols numRows), [(3,2), (3,4), (2,3), (4,3)])
 
-  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth, fifth, sixth, seventh])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth, fifth, sixth, seventh])
   in
     (results, (all (==True) results))
 
+testGetIndexesOfEmptyNeighboringPointsAllEmptyFields::([Bool], Bool)
+testGetIndexesOfEmptyNeighboringPointsAllEmptyFields = let
+  numRows = 5
+  numCols = 5
+  emptyBoard:: Matrix Int
+  emptyBoard = getEmptyBoard numRows numCols
 
-test_get_indexes_of_empty_neighboring_points_all_empty_fields::([Bool], Bool)
-test_get_indexes_of_empty_neighboring_points_all_empty_fields = let
-  num_rows = 5
-  num_cols = 5
-  empty_board:: Matrix Int
-  empty_board = change_all_null_values_to_empty (get_empty_board num_rows num_cols)
+--Tuple of lists structure: (<result>, <expected_result>)
+  first = ((getIndexesOfEmptyNeighboringPoints (1,1) emptyBoard numCols numRows), [(1,2), (2,1)])
+  second = ((getIndexesOfEmptyNeighboringPoints (1,5) emptyBoard numCols numRows), [(1,4), (2,5)])
+  third = ((getIndexesOfEmptyNeighboringPoints (5,1) emptyBoard numCols numRows), [(5,2), (4,1)])
+  fourth = ((getIndexesOfEmptyNeighboringPoints (5,5) emptyBoard numCols numRows), [(5,4), (4,5)])
+  fifth = ((getIndexesOfEmptyNeighboringPoints (3,1) emptyBoard numCols numRows), [(3,2), (2,1), (4,1)])
+  sixth = ((getIndexesOfEmptyNeighboringPoints (1,3) emptyBoard numCols numRows), [(1,2), (1,4), (2,3)])
+  seventh = ((getIndexesOfEmptyNeighboringPoints (3,3) emptyBoard numCols numRows), [(3,2), (3,4), (2,3), (4,3)])
 
---  For point (1,1) it should return [(1,2),(2,1)]
-  first = ((get_indexes_of_empty_neighboring_points (1,1) empty_board num_cols num_rows), [(1,2), (2,1)])
-  --For point (1,5) it should return [(1,2),(2,1)]
-  second = ((get_indexes_of_empty_neighboring_points (1,5) empty_board num_cols num_rows), [(1,4), (2,5)])
-  --For point (5,1) it should return [(5,2), (1,4)]
-  third = ((get_indexes_of_empty_neighboring_points (5,1) empty_board num_cols num_rows), [(5,2), (4,1)])
-  --For point (5,5) it should return [(5,4), (4,5)]
-  fourth = ((get_indexes_of_empty_neighboring_points (5,5) empty_board num_cols num_rows), [(5,4), (4,5)])
-  --For point (3,1) it should return [(3,2), (2,1), (4,1)]
-  fifth = ((get_indexes_of_empty_neighboring_points (3,1) empty_board num_cols num_rows), [(3,2), (2,1), (4,1)])
-  --For point (1, 3) it should return [(1,2), (1,4), (2,3)]
-  sixth = ((get_indexes_of_empty_neighboring_points (1,3) empty_board num_cols num_rows), [(1,2), (1,4), (2,3)])
-  --For point (3, 3) it should return [(3,2), (3,4), (2,3), (4,3)]
-  seventh = ((get_indexes_of_empty_neighboring_points (3,3) empty_board num_cols num_rows), [(3,2), (3,4), (2,3), (4,3)])
-
-  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth, fifth, sixth, seventh])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth, fifth, sixth, seventh])
   in
     (results, (all (==True) results))
 
+testSetValuesUnderIndexesToTestValueAllIndexes::Bool
+testSetValuesUnderIndexesToTestValueAllIndexes = let
+    numRows = 5
+    numCols = 5
+    emptyBoard:: Matrix Int
+    emptyBoard = getEmptyBoard numRows numCols
+    matrixWithJustTestValue = fromList numRows numCols (repeat testValueField)
 
-test_set_values_under_indexes_to_test_value_all_indexes::Bool
-test_set_values_under_indexes_to_test_value_all_indexes = let
-    num_rows = 5
-    num_cols = 5
-    empty_board:: Matrix Int
-    empty_board = get_empty_board num_rows num_cols
-
-    matrix_with_just_test_value = fromList num_rows num_cols (repeat testValueField)
-
-    all_indexes = [(row, col) | row <- [1..num_rows], col <-[1..num_cols]]
-
-    output_matrix = set_values_under_indexes_to_value empty_board all_indexes testValueField
+    allIndexes = [(row, col) | row <- [1..numRows], col <-[1..numCols]]
+    outputMatrix = setValuesUnderIndexesToValue emptyBoard allIndexes testValueField
 
     in
-      matrix_with_just_test_value == output_matrix
+      matrixWithJustTestValue == outputMatrix
 
-test_set_values_under_indexes_to_test_value_no_indexes::Bool
-test_set_values_under_indexes_to_test_value_no_indexes = let
-    num_rows = 5
-    num_cols = 5
-    empty_board:: Matrix Int
-    empty_board = get_empty_board num_rows num_cols
+testSetValuesUnderIndexesToTestValueNoIndexes::Bool
+testSetValuesUnderIndexesToTestValueNoIndexes = let
+    numRows = 5
+    numCols = 5
+    emptyBoard:: Matrix Int
+    emptyBoard = getEmptyBoard numRows numCols
 
-    output_matrix = set_values_under_indexes_to_value empty_board [] testValueField
+    outputMatrix = setValuesUnderIndexesToValue emptyBoard [] testValueField
 
     in
-      empty_board == output_matrix
+      emptyBoard == outputMatrix
 
-test_area_grow_empty_board:: Bool
-test_area_grow_empty_board = let
-  num_rows = 5
-  num_cols = 5
+testAreaGrowEmptyBoard:: Bool
+testAreaGrowEmptyBoard = let
+  numRows = 5
+  numCols = 5
 
-  all_indexes = [(row, col) | row <- [1..num_rows], col <-[1..num_cols]]
+  allIndexes = [(row, col) | row <- [1..numRows], col <-[1..numCols]]
 
-  empty_board:: Matrix Int
-  empty_board = set_values_under_indexes_to_value (get_empty_board num_rows num_cols) all_indexes testValueField
-  matrix_with_just_test_value = fromList num_rows num_cols (repeat testValueField)
-  output_matrix = area_grow (1, 1) empty_board
+  emptyBoard:: Matrix Int
+  emptyBoard = setValuesUnderIndexesToValue (getEmptyBoard numRows numCols) allIndexes testValueField
+  matrixWithJustTestValue = fromList numRows numCols (repeat testValueField)
+  outputMatrix = areaGrow (1, 1) emptyBoard
   in
-    output_matrix == matrix_with_just_test_value
+    outputMatrix == matrixWithJustTestValue
 
-test_area_grow_split_in_two:: Bool
-test_area_grow_split_in_two = let
+testAreaGrowSplitInTwo:: Bool
+testAreaGrowSplitInTwo = let
     a = emptyValueField
     b = filledValueField
     c = testValueField
 
-    split_in_two_matrix:: Matrix Int
-    split_in_two_matrix = fromLists (take 5 (repeat [a,a,b,a,a]))
-    expected_output:: Matrix Int
-    expected_output = fromLists (take 5 (repeat [c,c,b,a,a]))
+    splitInTwoMatrix:: Matrix Int
+    splitInTwoMatrix = fromLists (take 5 (repeat [a,a,b,a,a]))
+    expectedOutput:: Matrix Int
+    expectedOutput = fromLists (take 5 (repeat [c,c,b,a,a]))
 
-    output_matrix = area_grow (1, 1) split_in_two_matrix
+    outputMatrix = areaGrow (1, 1) splitInTwoMatrix
   in
-    output_matrix == expected_output
+    outputMatrix == expectedOutput
 
-
-test_area_grow_identity:: Bool
-test_area_grow_identity = let
+testAreaGrowIdentity:: Bool
+testAreaGrowIdentity = let
     a = emptyValueField
     b = filledValueField
     c = testValueField
 
-    identity_matrix:: Matrix Int
-    identity_matrix = fromLists [
+    identityMatrix:: Matrix Int
+    identityMatrix = fromLists [
       [b, a, a, a, a],
       [a, b, a, a, a],
       [a, a, b, a, a],
       [a, a, a, b, a],
       [a, a, a, a, b]
       ]
-    expected_output:: Matrix Int
-    expected_output = fromLists [
+    expectedOutput:: Matrix Int
+    expectedOutput = fromLists [
       [b, c, c, c, c],
       [a, b, c, c, c],
       [a, a, b, c, c],
@@ -150,41 +137,41 @@ test_area_grow_identity = let
       [a, a, a, a, b]
       ]
 
-    output_matrix = area_grow (get_index_of_first_empty_field identity_matrix) identity_matrix
+    outputMatrix = areaGrow (getIndexOfFirstEmptyField identityMatrix) identityMatrix
   in
-    output_matrix == expected_output
+    outputMatrix == expectedOutput
 
-test_area_grow_single_channel:: Bool
-test_area_grow_single_channel = let
+testAreaGrowSingleChannel:: Bool
+testAreaGrowSingleChannel = let
     a = emptyValueField
     b = filledValueField
     c = testValueField
 
-    single_channel_matrix:: Matrix Int
-    single_channel_matrix = fromLists [
+    singleChannelMatrix:: Matrix Int
+    singleChannelMatrix = fromLists [
       [a, a, a, a],
       [b, b, b, a],
       [b, b, a, a],
       [a, a, a, b]
       ]
 
-    expected_output = fromLists [
+    expectedOutput = fromLists [
         [c, c, c, c],
         [b, b, b, c],
         [b, b, c, c],
         [c, c, c, b]
         ]
-    output_matrix = area_grow (get_index_of_first_empty_field single_channel_matrix) single_channel_matrix
+    outputMatrix = areaGrow (getIndexOfFirstEmptyField singleChannelMatrix) singleChannelMatrix
   in
-    output_matrix == expected_output
+    outputMatrix == expectedOutput
 
-test_are_empty_fields_creating_single_area_identity_matrix:: Bool
-test_are_empty_fields_creating_single_area_identity_matrix = let
+testAreEmptyFieldsCreatingSingleAreaIdentityMatrix:: Bool
+testAreEmptyFieldsCreatingSingleAreaIdentityMatrix = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  identity_matrix = fromLists [
+  identityMatrix = fromLists [
         [b, a, a, a, a],
         [a, b, a, a, a],
         [a, a, b, a, a],
@@ -192,112 +179,116 @@ test_are_empty_fields_creating_single_area_identity_matrix = let
         [a, a, a, a, b]
         ]
   in
-    are_empty_fields_creating_single_area identity_matrix == False
+    areEmptyFieldsCreatingSingleArea identityMatrix == False
 
-test_are_empty_fields_creating_single_area_single_channel_matrix:: Bool
-test_are_empty_fields_creating_single_area_single_channel_matrix = let
+testAreEmptyFieldsCreatingSingleAreaSingleChannelMatrix:: Bool
+testAreEmptyFieldsCreatingSingleAreaSingleChannelMatrix = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  single_channel_matrix = fromLists [
+  singleChannelMatrix = fromLists [
         [a, a, a, a],
         [b, b, b, a],
         [b, b, a, a],
         [a, a, a, b]
         ]
   in
-    are_empty_fields_creating_single_area single_channel_matrix == True
+    areEmptyFieldsCreatingSingleArea singleChannelMatrix == True
 
-test_getFieldsSurroundingIntersection_corners:: ([Bool], Bool)
-test_getFieldsSurroundingIntersection_corners = let
+testGetFieldsSurroundingIntersectionCorners:: ([Bool], Bool)
+testGetFieldsSurroundingIntersectionCorners = let
   height = 4
   width = 4
   value = 10
 
-  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
-  indexes_matrix = fromList height width indexes_list
+  indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexesMatrix = fromList height width indexesList
 
-  first_inter:: ((Int, Int), Int)
-  first_inter = ((0,0),value)
-  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,1)])
+  --Tuple of lists structure: (<result>, <expected_result>)
 
-  second_inter:: ((Int, Int), Int)
-  second_inter = ((0,4),value)
-  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(1,4)])
+  firstInter:: ((Int, Int), Int)
+  firstInter = ((0,0),value)
+  first = ((getFieldsSurroundingIntersection indexesMatrix firstInter), [(1,1)])
+
+  secondInter:: ((Int, Int), Int)
+  secondInter = ((0,4),value)
+  second = ((getFieldsSurroundingIntersection indexesMatrix secondInter), [(1,4)])
 
 
-  third_inter:: ((Int, Int), Int)
-  third_inter = ((4,0),value)
-  third = ((getFieldsSurroundingIntersection indexes_matrix third_inter), [(4,1)])
+  thirdInter:: ((Int, Int), Int)
+  thirdInter = ((4,0),value)
+  third = ((getFieldsSurroundingIntersection indexesMatrix thirdInter), [(4,1)])
 
-  fourth_inter:: ((Int, Int), Int)
-  fourth_inter = ((4,4),value)
-  fourth = ((getFieldsSurroundingIntersection indexes_matrix fourth_inter), [(4,4)])
+  fourthInter:: ((Int, Int), Int)
+  fourthInter = ((4,4),value)
+  fourth = ((getFieldsSurroundingIntersection indexesMatrix fourthInter), [(4,4)])
 
-  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth])
     in
       (results, (all (==True) results))
 
-test_getFieldsSurroundingIntersection_edges:: ([Bool], Bool)
-test_getFieldsSurroundingIntersection_edges = let
+testGetFieldsSurroundingIntersectionEdges:: ([Bool], Bool)
+testGetFieldsSurroundingIntersectionEdges = let
   height = 4
   width = 4
   value = 10
 
-  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
-  indexes_matrix = fromList height width indexes_list
+  indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexesMatrix = fromList height width indexesList
 
-  first_inter:: ((Int, Int), Int)
-  first_inter = ((0,2),value)
-  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,2), (1,3)])
+  --Tuple of lists structure: (<result>, <expected_result>)
 
-  second_inter:: ((Int, Int), Int)
-  second_inter = ((2, 0),value)
-  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(2,1), (3,1)])
+  firstInter:: ((Int, Int), Int)
+  firstInter = ((0,2),value)
+  first = ((getFieldsSurroundingIntersection indexesMatrix firstInter), [(1,2), (1,3)])
 
-  third_inter:: ((Int, Int), Int)
-  third_inter = ((4, 1),value)
-  third = ((getFieldsSurroundingIntersection indexes_matrix third_inter), [(4,1), (4,2)])
+  secondInter:: ((Int, Int), Int)
+  secondInter = ((2, 0),value)
+  second = ((getFieldsSurroundingIntersection indexesMatrix secondInter), [(2,1), (3,1)])
 
-  fourth_inter:: ((Int, Int), Int)
-  fourth_inter = ((1, 4),value)
-  fourth = ((getFieldsSurroundingIntersection indexes_matrix fourth_inter), [(1,4), (2,4)])
+  thirdInter:: ((Int, Int), Int)
+  thirdInter = ((4, 1),value)
+  third = ((getFieldsSurroundingIntersection indexesMatrix thirdInter), [(4,1), (4,2)])
 
-  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth])
+  fourthInter:: ((Int, Int), Int)
+  fourthInter = ((1, 4),value)
+  fourth = ((getFieldsSurroundingIntersection indexesMatrix fourthInter), [(1,4), (2,4)])
+
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth])
     in
       (results, (all (==True) results))
 
-
-test_getFieldsSurroundingIntersection_middle:: ([Bool], Bool)
-test_getFieldsSurroundingIntersection_middle = let
+testGetFieldsSurroundingIntersectionMiddle:: ([Bool], Bool)
+testGetFieldsSurroundingIntersectionMiddle = let
   height = 4
   width = 4
   value = 10
 
-  indexes_list = [(i,j)| i <- [1..height], j <- [1..width]]
-  indexes_matrix = fromList height width indexes_list
+  indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
+  indexesMatrix = fromList height width indexesList
 
-  first_inter:: ((Int, Int), Int)
-  first_inter = ((1, 1),value)
-  first = ((getFieldsSurroundingIntersection indexes_matrix first_inter), [(1,1), (1,2), (2,1), (2,2)])
+  --Tuple of lists structure: (<result>, <expected_result>)
 
-  second_inter:: ((Int, Int), Int)
-  second_inter = ((3, 3),value)
-  second = ((getFieldsSurroundingIntersection indexes_matrix second_inter), [(3,3), (3,4), (4,3), (4,4)])
+  firstInter:: ((Int, Int), Int)
+  firstInter = ((1, 1),value)
+  first = ((getFieldsSurroundingIntersection indexesMatrix firstInter), [(1,1), (1,2), (2,1), (2,2)])
 
-  results = (map tuple_of_list_of_tuples_equal [first, second])
+  secondInter:: ((Int, Int), Int)
+  secondInter = ((3, 3),value)
+  second = ((getFieldsSurroundingIntersection indexesMatrix secondInter), [(3,3), (3,4), (4,3), (4,4)])
+
+  results = (map areListOfTuplesOfIntsEqual [first, second])
     in
       (results, (all (==True) results))
 
-
-test_isBoardFilledForIntersection_one_filled:: Bool
-test_isBoardFilledForIntersection_one_filled = let
+testIsBoardFilledForIntersectionOneFilled:: Bool
+testIsBoardFilledForIntersectionOneFilled = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [b, a, a, a, a],
         [a, a, a, a, a],
         [a, a, a, a, a],
@@ -308,16 +299,15 @@ test_isBoardFilledForIntersection_one_filled = let
   intersection:: ((Int, Int), Int)
   intersection = ((0,0), 1)
   in
-    isBoardFilledForIntersection tested_matrix intersection == True
+    isBoardFilledForIntersection testedMatrix intersection == True
 
-
-test_isBoardFilledForIntersection_two_filled:: Bool
-test_isBoardFilledForIntersection_two_filled = let
+testIsBoardFilledForIntersectionTwoFilled:: Bool
+testIsBoardFilledForIntersectionTwoFilled = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, b, b, a, a],
         [a, a, a, a, a],
         [a, a, a, a, a],
@@ -328,16 +318,15 @@ test_isBoardFilledForIntersection_two_filled = let
   intersection:: ((Int, Int), Int)
   intersection = ((0,2), 2)
   in
-    isBoardFilledForIntersection tested_matrix intersection == True
+    isBoardFilledForIntersection testedMatrix intersection == True
 
-
-test_isBoardFilledForIntersection_three_filled:: Bool
-test_isBoardFilledForIntersection_three_filled = let
+testIsBoardFilledForIntersectionThreeFilled:: Bool
+testIsBoardFilledForIntersectionThreeFilled = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a, a],
         [a, b, b, a, a],
         [a, b, a, a, a],
@@ -348,15 +337,15 @@ test_isBoardFilledForIntersection_three_filled = let
   intersection:: ((Int, Int), Int)
   intersection = ((2,2), 3)
   in
-    isBoardFilledForIntersection tested_matrix intersection == True
+    isBoardFilledForIntersection testedMatrix intersection == True
 
-test_isBoardFilledForIntersection_four_filled:: Bool
-test_isBoardFilledForIntersection_four_filled = let
+testIsBoardFilledForIntersectionFourFilled:: Bool
+testIsBoardFilledForIntersectionFourFilled = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a, a],
         [a, b, b, a, a],
         [a, b, b, a, a],
@@ -367,16 +356,15 @@ test_isBoardFilledForIntersection_four_filled = let
   intersection:: ((Int, Int), Int)
   intersection = ((2,2), 4)
   in
-    isBoardFilledForIntersection tested_matrix intersection == True
+    isBoardFilledForIntersection testedMatrix intersection == True
 
-
-test_isBoardFilledForEveryIntersection_one_intersection:: Bool
-test_isBoardFilledForEveryIntersection_one_intersection = let
+testIsBoardFilledForEveryIntersectionOneIntersection:: Bool
+testIsBoardFilledForEveryIntersectionOneIntersection = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a, a],
         [a, b, a, a, a],
         [a, a, a, a, a],
@@ -387,15 +375,15 @@ test_isBoardFilledForEveryIntersection_one_intersection = let
   intersection:: ((Int, Int), Int)
   intersection = ((1,1), 1)
   in
-    isBoardFilledForEveryIntersection tested_matrix [intersection] == True
+    isBoardFilledForEveryIntersection testedMatrix [intersection] == True
 
-test_isBoardFilledForEveryIntersection_three_intersections:: Bool
-test_isBoardFilledForEveryIntersection_three_intersections = let
+testIsBoardFilledForEveryIntersectionThreeIntersections:: Bool
+testIsBoardFilledForEveryIntersectionThreeIntersections = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a, a],
         [a, b, b, a, a],
         [a, a, b, a, a],
@@ -406,15 +394,15 @@ test_isBoardFilledForEveryIntersection_three_intersections = let
   intersections:: [((Int, Int), Int)]
   intersections = [((1,2), 2), ((2,3),2), ((5,5),1)]
   in
-    isBoardFilledForEveryIntersection tested_matrix intersections == True
+    isBoardFilledForEveryIntersection testedMatrix intersections == True
 
-test_isBoardFilledForEveryIntersection_full_example:: Bool
-test_isBoardFilledForEveryIntersection_full_example = let
+testIsBoardFilledForEveryIntersectionFullExample:: Bool
+testIsBoardFilledForEveryIntersectionFullExample = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a],
         [b, b, b, a],
         [b, b, a, a],
@@ -424,16 +412,15 @@ test_isBoardFilledForEveryIntersection_full_example = let
   intersections:: [((Int, Int), Int)]
   intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
   in
-    isBoardFilledForEveryIntersection tested_matrix intersections == True
+    isBoardFilledForEveryIntersection testedMatrix intersections == True
 
-
-test_isValidSolution_full_example::Bool
-test_isValidSolution_full_example = let
+testIsValidSolutionFullExample::Bool
+testIsValidSolutionFullExample = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  tested_matrix = fromLists [
+  testedMatrix = fromLists [
         [a, a, a, a],
         [b, b, b, a],
         [b, b, a, a],
@@ -443,15 +430,14 @@ test_isValidSolution_full_example = let
   intersections:: [((Int, Int), Int)]
   intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
   in
-    isValidSolution tested_matrix  intersections == True
+    isValidSolution testedMatrix  intersections == True
 
-test_solve_full_example = let
-
+testSolveFullExample = let
   a = emptyValueField
   b = filledValueField
   c = testValueField
 
-  expected_output = fromLists [
+  expectedOutput = fromLists [
         [a, a, a, a],
         [b, b, b, a],
         [b, b, a, a],
@@ -460,43 +446,40 @@ test_solve_full_example = let
 
   intersections:: [((Int, Int), Int)]
   intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
+  inputBoard = getEmptyBoard 4 4
 
-  input_board = get_empty_board 4 4
-
-  Just solution = solve input_board intersections []
+  Just solution = solve inputBoard intersections []
 
   in
-    expected_output == solution
+    expectedOutput == solution
 
 
-
-
-run_all_tests:: ([Bool], Bool)
-run_all_tests = let
-  tests = [test_get_index_of_first_empty_or_null_value,
-   (snd test_get_indexes_of_neighboring_points),
-   (snd test_get_indexes_of_empty_neighboring_points_all_empty_fields),
-   test_set_values_under_indexes_to_test_value_all_indexes,
-   test_set_values_under_indexes_to_test_value_no_indexes,
-   test_area_grow_empty_board,
-   test_area_grow_split_in_two,
-   test_area_grow_identity,
-   test_area_grow_single_channel,
-   test_are_empty_fields_creating_single_area_identity_matrix,
-   test_are_empty_fields_creating_single_area_single_channel_matrix,
-   (snd test_getFieldsSurroundingIntersection_corners),
-   (snd test_getFieldsSurroundingIntersection_edges),
-   (snd test_getFieldsSurroundingIntersection_middle),
-   test_isBoardFilledForIntersection_one_filled,
-   test_isBoardFilledForIntersection_two_filled,
-   test_isBoardFilledForIntersection_three_filled,
-   test_isBoardFilledForIntersection_four_filled,
-   test_isBoardFilledForEveryIntersection_one_intersection,
-   test_isBoardFilledForEveryIntersection_three_intersections,
-   test_isBoardFilledForEveryIntersection_full_example,
-   test_isValidSolution_full_example,
-   test_isValidSolution_full_example,
-   test_solve_full_example
-   ]
+runAllTests:: ([Bool], Bool)
+runAllTests = let
+  tests = [
+    testGetIndexOfFirstEmptyValue,
+    (snd testGetIndexesOfNeighboringPoints),
+    (snd testGetIndexesOfEmptyNeighboringPointsAllEmptyFields),
+    testSetValuesUnderIndexesToTestValueAllIndexes,
+    testSetValuesUnderIndexesToTestValueNoIndexes,
+    testAreaGrowEmptyBoard,
+    testAreaGrowSplitInTwo,
+    testAreaGrowIdentity,
+    testAreaGrowSingleChannel,
+    testAreEmptyFieldsCreatingSingleAreaIdentityMatrix,
+    testAreEmptyFieldsCreatingSingleAreaSingleChannelMatrix,
+    (snd testGetFieldsSurroundingIntersectionCorners),
+    (snd testGetFieldsSurroundingIntersectionEdges),
+    (snd testGetFieldsSurroundingIntersectionMiddle),
+    testIsBoardFilledForIntersectionOneFilled,
+    testIsBoardFilledForIntersectionTwoFilled,
+    testIsBoardFilledForIntersectionThreeFilled,
+    testIsBoardFilledForIntersectionFourFilled,
+    testIsBoardFilledForEveryIntersectionOneIntersection,
+    testIsBoardFilledForEveryIntersectionThreeIntersections,
+    testIsBoardFilledForEveryIntersectionFullExample,
+    testIsValidSolutionFullExample,
+    testIsValidSolutionFullExample,
+    testSolveFullExample]
   in
     (tests, (all (==True) tests))
