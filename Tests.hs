@@ -463,7 +463,7 @@ test_solve_full_example = let
 
   input_board = get_empty_board 4 4
 
-  Just solution = solve_debugging input_board intersections []
+  Just solution = solve input_board intersections []
 
   in
     expected_output == solution
