@@ -5,17 +5,20 @@ module Board(get_empty_board, change_all_null_values_to_empty, get_index_of_firs
  get_value_under_index,
  get_values_under_indexes,
  isBoardFilledForIntersection,
- isBoardFilledForEveryIntersection
+ isBoardFilledForEveryIntersection,
+ isValidSolution,
+ solve_debugging
  ) where
 
 import Data.Matrix
 import Data.List
+import Data.Maybe
 import Constants
 import Creek
-
+import Utils
 
 get_empty_board:: Int -> Int -> Matrix Int
-get_empty_board height width = matrix height width $ \(i,j) -> nullValueField
+get_empty_board height width = matrix height width $ \(i,j) -> emptyValueField
 
 change_all_null_values_to_empty:: Matrix Int -> Matrix Int
 change_all_null_values_to_empty matrix = (mapPos (\(r,c) a -> if a == nullValueField then emptyValueField else a) matrix)
@@ -123,4 +126,28 @@ isBoardFilledForIntersection matrix ((x,y), value) =
     value == num_of_filled_values
 
 isBoardFilledForEveryIntersection :: Matrix Int -> [((Int, Int), Int)] -> Bool
-isBoardFilledForEveryIntersection matrix intersections = all (==True) (map (\intersection ->  isBoardFilledForIntersection matrix intersection) intersections)
+isBoardFilledForEveryIntersection matrix intersections =
+  all (==True) (map (\intersection ->  isBoardFilledForIntersection matrix intersection) intersections)
+
+isValidSolution:: Matrix Int -> [((Int, Int), Int)] -> Bool
+isValidSolution matrix intersections =
+  (isBoardFilledForEveryIntersection matrix intersections) && (are_empty_fields_creating_single_area matrix)
+
+
+solve_debugging:: Matrix Int -> [((Int, Int), Int)] -> [((Int, Int), Int)] -> Maybe(Matrix Int)
+solve_debugging matrix [] processed_intersections
+  | isValidSolution matrix processed_intersections == True  = Just (change_all_null_values_to_empty matrix)
+  | otherwise                                               = Nothing
+solve_debugging matrix (intersection:intersections) processed_intersections =
+  let
+    (_, value) = intersection
+    fields_around_intersection = getFieldsSurroundingIntersection matrix intersection
+    possible_moves = uniqueCombinations value fields_around_intersection
+    every_possible_board = map(\moves -> set_values_under_indexes_to_value matrix moves filledValueField) possible_moves
+
+    solve_transform =
+      (\transformed_board -> solve_debugging transformed_board intersections (intersection:processed_intersections))
+    satisfy_condition = (\solution -> not (isNothing solution))
+  in
+    extractMaybeMatrix (firstSatisfying satisfy_condition (map (solve_transform) every_possible_board))
+

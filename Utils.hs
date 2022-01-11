@@ -1,4 +1,8 @@
-module Utils(splitWhen, indexes_equal, tuple_of_list_of_tuples_equal, uniqueCombinations) where
+module Utils(splitWhen, indexes_equal, tuple_of_list_of_tuples_equal, uniqueCombinations, firstSatisfying,
+extractMaybeMatrix) where
+
+import Data.Matrix
+
 
 splitWhen:: (a -> Bool) -> [a] -> ([a], [a])
 splitWhen _ []  = ([],[])
@@ -27,3 +31,7 @@ firstSatisfying :: (a->Bool) -> [a] -> Maybe a
 firstSatisfying f [] = Nothing
 firstSatisfying f (x:xs)  | f x == True   = Just x
                           | otherwise     = firstSatisfying f xs
+
+extractMaybeMatrix:: Maybe(Maybe(Matrix Int)) -> Maybe( Matrix Int)
+extractMaybeMatrix (Just solution) = solution
+extractMaybeMatrix Nothing = Nothing

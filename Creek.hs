@@ -1,6 +1,7 @@
 module Creek(Creek, fromStdInput, fromFile, getSize, getHeight, getWidth, getIntersections,
              getIntersectionsSortedByDigitAsc, getIntersectionsSortedByDigitDesc,
-              getCreekSortedByIntersectionNumber) where
+              getCreekSortedByIntersectionNumber
+              ) where
 
 import Utils
 import Data.Function (on)

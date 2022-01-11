@@ -68,25 +68,6 @@ test_get_indexes_of_empty_neighboring_points_all_empty_fields = let
   in
     (results, (all (==True) results))
 
-test_get_indexes_of_empty_neighboring_points_just_nones::([Bool], Bool)
-test_get_indexes_of_empty_neighboring_points_just_nones = let
-  num_rows = 5
-  num_cols = 5
-  empty_board:: Matrix Int
-  empty_board = get_empty_board num_rows num_cols
-
-  --  Empty list should always be returned
-  first = ((get_indexes_of_empty_neighboring_points (1,1) empty_board num_cols num_rows), [])
-  second = ((get_indexes_of_empty_neighboring_points (1,5) empty_board num_cols num_rows), [])
-  third = ((get_indexes_of_empty_neighboring_points (5,1) empty_board num_cols num_rows), [])
-  fourth = ((get_indexes_of_empty_neighboring_points (5,5) empty_board num_cols num_rows), [])
-  fifth = ((get_indexes_of_empty_neighboring_points (3,1) empty_board num_cols num_rows), [])
-  sixth = ((get_indexes_of_empty_neighboring_points (1,3) empty_board num_cols num_rows), [])
-  seventh = ((get_indexes_of_empty_neighboring_points (3,3) empty_board num_cols num_rows), [])
-
-  results = (map tuple_of_list_of_tuples_equal [first, second, third, fourth, fifth, sixth, seventh])
-  in
-    (results, (all (==True) results))
 
 test_set_values_under_indexes_to_test_value_all_indexes::Bool
 test_set_values_under_indexes_to_test_value_all_indexes = let
@@ -446,12 +427,55 @@ test_isBoardFilledForEveryIntersection_full_example = let
     isBoardFilledForEveryIntersection tested_matrix intersections == True
 
 
+test_isValidSolution_full_example::Bool
+test_isValidSolution_full_example = let
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  tested_matrix = fromLists [
+        [a, a, a, a],
+        [b, b, b, a],
+        [b, b, a, a],
+        [a, a, a, b]
+        ]
+
+  intersections:: [((Int, Int), Int)]
+  intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
+  in
+    isValidSolution tested_matrix  intersections == True
+
+test_solve_full_example = let
+
+  a = emptyValueField
+  b = filledValueField
+  c = testValueField
+
+  expected_output = fromLists [
+        [a, a, a, a],
+        [b, b, b, a],
+        [b, b, a, a],
+        [a, a, a, b]
+        ]
+
+  intersections:: [((Int, Int), Int)]
+  intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
+
+  input_board = get_empty_board 4 4
+
+  Just solution = solve_debugging input_board intersections []
+
+  in
+    expected_output == solution
+
+
+
+
 run_all_tests:: ([Bool], Bool)
 run_all_tests = let
   tests = [test_get_index_of_first_empty_or_null_value,
    (snd test_get_indexes_of_neighboring_points),
    (snd test_get_indexes_of_empty_neighboring_points_all_empty_fields),
-   (snd test_get_indexes_of_empty_neighboring_points_just_nones),
    test_set_values_under_indexes_to_test_value_all_indexes,
    test_set_values_under_indexes_to_test_value_no_indexes,
    test_area_grow_empty_board,
@@ -469,7 +493,10 @@ run_all_tests = let
    test_isBoardFilledForIntersection_four_filled,
    test_isBoardFilledForEveryIntersection_one_intersection,
    test_isBoardFilledForEveryIntersection_three_intersections,
-   test_isBoardFilledForEveryIntersection_full_example
+   test_isBoardFilledForEveryIntersection_full_example,
+   test_isValidSolution_full_example,
+   test_isValidSolution_full_example,
+   test_solve_full_example
    ]
   in
     (tests, (all (==True) tests))
