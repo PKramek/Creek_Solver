@@ -26,22 +26,16 @@ testGetIndexesOfNeighboringPoints = let
   numRows = 5
   numCols = 5
 
-  --For point (1,1) it should return [(1,2),(2,1)]
+--Tuple of lists structure: (<result>, <expected_result>)
   first = ((getIndexesOfNeighboringPoints (1,1) numCols numRows), [(1,2), (2,1)])
-  --For point (1,5) it should return [(1,2),(2,1)]
   second = ((getIndexesOfNeighboringPoints (1,5) numCols numRows), [(1,4), (2,5)])
-  --For point (5,1) it should return [(5,2), (1,4)]
   third = ((getIndexesOfNeighboringPoints (5,1) numCols numRows), [(5,2), (4,1)])
-  --For point (5,5) it should return [(5,4), (4,5)]
   fourth = ((getIndexesOfNeighboringPoints (5,5) numCols numRows), [(5,4), (4,5)])
-  --For point (3,1) it should return [(3,2), (2,1), (4,1)]
   fifth = ((getIndexesOfNeighboringPoints (3,1) numCols numRows), [(3,2), (2,1), (4,1)])
-  --For point (1, 3) it should return [(1,2), (1,4), (2,3)]
   sixth = ((getIndexesOfNeighboringPoints (1,3) numCols numRows), [(1,2), (1,4), (2,3)])
-  --For point (3, 3) it should return [(3,2), (3,4), (2,3), (4,3)]
   seventh = ((getIndexesOfNeighboringPoints (3,3) numCols numRows), [(3,2), (3,4), (2,3), (4,3)])
 
-  results = (map tupleOfListOfTuplesEqual [first, second, third, fourth, fifth, sixth, seventh])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth, fifth, sixth, seventh])
   in
     (results, (all (==True) results))
 
@@ -52,22 +46,16 @@ testGetIndexesOfEmptyNeighboringPointsAllEmptyFields = let
   emptyBoard:: Matrix Int
   emptyBoard = getEmptyBoard numRows numCols
 
---  For point (1,1) it should return [(1,2),(2,1)]
+--Tuple of lists structure: (<result>, <expected_result>)
   first = ((getIndexesOfEmptyNeighboringPoints (1,1) emptyBoard numCols numRows), [(1,2), (2,1)])
-  --For point (1,5) it should return [(1,2),(2,1)]
   second = ((getIndexesOfEmptyNeighboringPoints (1,5) emptyBoard numCols numRows), [(1,4), (2,5)])
-  --For point (5,1) it should return [(5,2), (1,4)]
   third = ((getIndexesOfEmptyNeighboringPoints (5,1) emptyBoard numCols numRows), [(5,2), (4,1)])
-  --For point (5,5) it should return [(5,4), (4,5)]
   fourth = ((getIndexesOfEmptyNeighboringPoints (5,5) emptyBoard numCols numRows), [(5,4), (4,5)])
-  --For point (3,1) it should return [(3,2), (2,1), (4,1)]
   fifth = ((getIndexesOfEmptyNeighboringPoints (3,1) emptyBoard numCols numRows), [(3,2), (2,1), (4,1)])
-  --For point (1, 3) it should return [(1,2), (1,4), (2,3)]
   sixth = ((getIndexesOfEmptyNeighboringPoints (1,3) emptyBoard numCols numRows), [(1,2), (1,4), (2,3)])
-  --For point (3, 3) it should return [(3,2), (3,4), (2,3), (4,3)]
   seventh = ((getIndexesOfEmptyNeighboringPoints (3,3) emptyBoard numCols numRows), [(3,2), (3,4), (2,3), (4,3)])
 
-  results = (map tupleOfListOfTuplesEqual [first, second, third, fourth, fifth, sixth, seventh])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth, fifth, sixth, seventh])
   in
     (results, (all (==True) results))
 
@@ -77,11 +65,9 @@ testSetValuesUnderIndexesToTestValueAllIndexes = let
     numCols = 5
     emptyBoard:: Matrix Int
     emptyBoard = getEmptyBoard numRows numCols
-
     matrixWithJustTestValue = fromList numRows numCols (repeat testValueField)
 
     allIndexes = [(row, col) | row <- [1..numRows], col <-[1..numCols]]
-
     outputMatrix = setValuesUnderIndexesToValue emptyBoard allIndexes testValueField
 
     in
@@ -219,6 +205,8 @@ testGetFieldsSurroundingIntersectionCorners = let
   indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
   indexesMatrix = fromList height width indexesList
 
+  --Tuple of lists structure: (<result>, <expected_result>)
+
   firstInter:: ((Int, Int), Int)
   firstInter = ((0,0),value)
   first = ((getFieldsSurroundingIntersection indexesMatrix firstInter), [(1,1)])
@@ -236,7 +224,7 @@ testGetFieldsSurroundingIntersectionCorners = let
   fourthInter = ((4,4),value)
   fourth = ((getFieldsSurroundingIntersection indexesMatrix fourthInter), [(4,4)])
 
-  results = (map tupleOfListOfTuplesEqual [first, second, third, fourth])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth])
     in
       (results, (all (==True) results))
 
@@ -248,6 +236,8 @@ testGetFieldsSurroundingIntersectionEdges = let
 
   indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
   indexesMatrix = fromList height width indexesList
+
+  --Tuple of lists structure: (<result>, <expected_result>)
 
   firstInter:: ((Int, Int), Int)
   firstInter = ((0,2),value)
@@ -265,7 +255,7 @@ testGetFieldsSurroundingIntersectionEdges = let
   fourthInter = ((1, 4),value)
   fourth = ((getFieldsSurroundingIntersection indexesMatrix fourthInter), [(1,4), (2,4)])
 
-  results = (map tupleOfListOfTuplesEqual [first, second, third, fourth])
+  results = (map areListOfTuplesOfIntsEqual [first, second, third, fourth])
     in
       (results, (all (==True) results))
 
@@ -278,6 +268,8 @@ testGetFieldsSurroundingIntersectionMiddle = let
   indexesList = [(i,j)| i <- [1..height], j <- [1..width]]
   indexesMatrix = fromList height width indexesList
 
+  --Tuple of lists structure: (<result>, <expected_result>)
+
   firstInter:: ((Int, Int), Int)
   firstInter = ((1, 1),value)
   first = ((getFieldsSurroundingIntersection indexesMatrix firstInter), [(1,1), (1,2), (2,1), (2,2)])
@@ -286,7 +278,7 @@ testGetFieldsSurroundingIntersectionMiddle = let
   secondInter = ((3, 3),value)
   second = ((getFieldsSurroundingIntersection indexesMatrix secondInter), [(3,3), (3,4), (4,3), (4,4)])
 
-  results = (map tupleOfListOfTuplesEqual [first, second])
+  results = (map areListOfTuplesOfIntsEqual [first, second])
     in
       (results, (all (==True) results))
 
@@ -441,7 +433,6 @@ testIsValidSolutionFullExample = let
     isValidSolution testedMatrix  intersections == True
 
 testSolveFullExample = let
-
   a = emptyValueField
   b = filledValueField
   c = testValueField
@@ -455,7 +446,6 @@ testSolveFullExample = let
 
   intersections:: [((Int, Int), Int)]
   intersections = [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]
-
   inputBoard = getEmptyBoard 4 4
 
   Just solution = solve inputBoard intersections []

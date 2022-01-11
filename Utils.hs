@@ -1,10 +1,10 @@
 module Utils(
   splitWhen,
   indexesEqual,
-  tupleOfListOfTuplesEqual,
+  areListOfTuplesOfIntsEqual,
   uniqueCombinations,
   firstSatisfying,
-  extractMaybeMatrix
+  unnestMaybe
 ) where
 
 import Data.Matrix
@@ -20,12 +20,12 @@ splitWhen f xs = helperSplit f [] xs
 indexesEqual::Eq a => ((a, a), (a, a)) -> Bool
 indexesEqual ((a,b), (c, d)) = a == c && b == d
 
-tupleOfListOfTuplesEqual:: ([(Int, Int)], [(Int, Int)]) -> Bool
-tupleOfListOfTuplesEqual ([],[]) = True
-tupleOfListOfTuplesEqual ([], y) = False
-tupleOfListOfTuplesEqual (x, []) = False
-tupleOfListOfTuplesEqual ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) == (snd y) &&
- (tupleOfListOfTuplesEqual (xs, ys))
+areListOfTuplesOfIntsEqual:: ([(Int, Int)], [(Int, Int)]) -> Bool
+areListOfTuplesOfIntsEqual ([],[]) = True
+areListOfTuplesOfIntsEqual ([], y) = False
+areListOfTuplesOfIntsEqual (x, []) = False
+areListOfTuplesOfIntsEqual ((x:xs),(y:ys)) = (fst x) == (fst y) && (snd x) == (snd y) &&
+ (areListOfTuplesOfIntsEqual (xs, ys))
 
 -- source: https://www.py4u.net/discuss/1984220
 uniqueCombinations:: (Eq t, Num t) => t -> [a] -> [[a]]
@@ -38,6 +38,6 @@ firstSatisfying f [] = Nothing
 firstSatisfying f (x:xs)  | f x == True   = Just x
                           | otherwise     = firstSatisfying f xs
 
-extractMaybeMatrix:: Maybe(Maybe(Matrix Int)) -> Maybe( Matrix Int)
-extractMaybeMatrix (Just solution) = solution
-extractMaybeMatrix Nothing = Nothing
+unnestMaybe:: Maybe(Maybe a) -> Maybe a
+unnestMaybe (Just solution) = solution
+unnestMaybe Nothing = Nothing

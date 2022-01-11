@@ -33,7 +33,7 @@ getValuesUnderIndexes indexes board = map (\index -> getValueUnderIndex index bo
 
 setValuesUnderIndexesToValue:: Matrix Int -> [(Int, Int)] -> Int -> Matrix Int
 setValuesUnderIndexesToValue matrix [] value= matrix
-setValuesUnderIndexesToValue matrix (index:xs) value = setValuesUnderIndexesToValue (setElem value index matrix) xs value
+setValuesUnderIndexesToValue matrix (x:xs) value = setValuesUnderIndexesToValue (setElem value x matrix) xs value
 
 getIndexOfFirstEmptyField:: Matrix Int -> (Int, Int)
 getIndexOfFirstEmptyField matrix =let
@@ -57,6 +57,7 @@ getIndexesOfNeighboringPoints (row, col) numColumns numRows =
   let
     connectedPoints = [(row, col-1), (row, col+1), (row-1, col), (row+1, col)]
   in
+--  filter out points outside matrix
     filter (\(c, r) -> c >= 1 && r >= 1 && c <= numColumns && r <= numRows) connectedPoints
 
 getIndexesOfEmptyNeighboringPoints:: (Int, Int) -> Matrix Int -> Int -> Int -> [(Int, Int)]
@@ -71,7 +72,7 @@ isValidSolution:: Matrix Int -> [((Int, Int), Int)] -> Bool
 isValidSolution matrix intersections =
   (isBoardFilledForEveryIntersection matrix intersections) && (areEmptyFieldsCreatingSingleArea matrix)
 
-
+-- To check if empty fields are creating single area, area grow algorithm is used
 areEmptyFieldsCreatingSingleArea:: Matrix Int -> Bool
 areEmptyFieldsCreatingSingleArea matrix = let
   areaSeed = getIndexOfFirstEmptyField matrix
@@ -91,7 +92,6 @@ areaGrow seedIndex matrix = let
     else
       areaGrowRecurrent [seedIndex] testedMatrix numColumns numRows
 
-
 areaGrowRecurrent:: [(Int, Int)] -> Matrix Int -> Int -> Int -> Matrix Int
 areaGrowRecurrent [] matrix numColumns numRows = matrix
 areaGrowRecurrent seeds matrix numColumns numRows = let
@@ -101,7 +101,6 @@ areaGrowRecurrent seeds matrix numColumns numRows = let
     modifiedMatrix = setValuesUnderIndexesToValue matrix emptyNeighboursIndexes testValueField
   in
     areaGrowRecurrent (remainingSeeds ++ emptyNeighboursIndexes) modifiedMatrix numColumns numRows
-
 
 isBoardFilledForIntersection:: Matrix Int -> ((Int, Int), Int) -> Bool
 isBoardFilledForIntersection matrix ((x,y), value) =
@@ -139,17 +138,22 @@ solve:: Matrix Int -> [((Int, Int), Int)] -> [((Int, Int), Int)] -> Maybe(Matrix
 solve matrix [] processedIntersections
   | isValidSolution matrix processedIntersections == True  = Just matrix
   | otherwise                                               = Nothing
-solve matrix (intersection:intersections) processedIntersections =
+solve matrix (x:xs) processedIntersections =
   let
-    (_, value) = intersection
-    fieldsAroundIntersection = getFieldsSurroundingIntersection matrix intersection
+    -- solve function uses depth-first search
+    (_, value) = x
+    fieldsAroundIntersection = getFieldsSurroundingIntersection matrix x
+--  for each board and single intersection we could make a move, that would consist of filling n fields
+--  around given intersection.
     possibleMoves = uniqueCombinations value fieldsAroundIntersection
     everyPossibleBoard = map(\moves -> setValuesUnderIndexesToValue matrix moves filledValueField) possibleMoves
 
     solveTransform =
-      (\transformedBoard -> solve transformedBoard intersections (intersection:processedIntersections))
+      (\transformedBoard -> solve transformedBoard xs (x:processedIntersections))
     satisfyCondition = (\solution -> not (isNothing solution))
   in
-    extractMaybeMatrix (firstSatisfying satisfyCondition (map (solveTransform) everyPossibleBoard))
+--  Applying unnestMaybe is necessary, because firstSatisfying function returns Maybe a, and applied to given input
+--  returns Maybe (Maybe (Matrix Int))
+    unnestMaybe (firstSatisfying satisfyCondition (map (solveTransform) everyPossibleBoard))
 
 
