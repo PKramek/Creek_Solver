@@ -1,5 +1,7 @@
-module Creek(Creek, fromStdInput, fromFile, getSize, getHeight, getWidth, getFields,
-             getFieldsSortedByDigitAsc, getFieldsSortedByDigitDesc) where
+module Creek(Creek, fromStdInput, fromFile, getSize, getHeight, getWidth, getIntersections,
+             getIntersectionsSortedByDigitAsc, getIntersectionsSortedByDigitDesc,
+              getCreekSortedByIntersectionNumber
+              ) where
 
 import Utils
 import Data.Function (on)
@@ -33,12 +35,15 @@ getHeight (Creek (height, width) _) = height
 getWidth:: Creek -> Int
 getWidth (Creek (height, width) _) = width
 
-getFields:: Creek -> [((Int, Int), Int)]
-getFields (Creek _ fields) = fields
+getIntersections:: Creek -> [((Int, Int), Int)]
+getIntersections (Creek _ fields) = fields
 
-getFieldsSortedByDigitAsc:: Creek -> [((Int, Int), Int)]
-getFieldsSortedByDigitAsc (Creek _ fields) = sortBy (compare `on` snd) fields
+getIntersectionsSortedByDigitAsc:: Creek -> [((Int, Int), Int)]
+getIntersectionsSortedByDigitAsc (Creek _ fields) = sortBy (compare `on` snd) fields
 
-getFieldsSortedByDigitDesc:: Creek -> [((Int, Int), Int)]
-getFieldsSortedByDigitDesc creek = reverse (getFieldsSortedByDigitAsc creek)
+getIntersectionsSortedByDigitDesc:: Creek -> [((Int, Int), Int)]
+getIntersectionsSortedByDigitDesc creek = reverse (getIntersectionsSortedByDigitAsc creek)
 
+getCreekSortedByIntersectionNumber :: Creek -> Creek
+getCreekSortedByIntersectionNumber not_sorted =
+    Creek (getSize not_sorted) (getIntersectionsSortedByDigitDesc not_sorted)
