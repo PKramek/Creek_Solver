@@ -5,8 +5,8 @@ import Utils
 import Data.Maybe
 import Data.Matrix
 
---input = "Creek (4, 4) [((1, 0), 1), ((1, 2), 2), ((2, 1), 4), ((2, 3), 1), ((3, 3), 1), ((4, 1), 0)]"
---creek = read input :: Creek
+input = "Creek (5,5) [((0, 2),2),((1,4),3),((2, 1),3),((2, 3),1),((3, 2),2),((3, 4),4),((4, 1),3),((5, 3),1),((5,5), 1), ((0,0), 1)]"
+creek = read input :: Creek
 
 solveCreek:: Creek -> Maybe(Matrix Int)
 solveCreek creek = let

@@ -24,6 +24,8 @@ fromFile = do
   serialized_creek <- readFile path
   let creek = read serialized_creek:: Creek
 
+  putStrLn ("File contained creek: " ++ (show creek))
+
   return creek
 
 getSize:: Creek -> (Int, Int)
