@@ -147,6 +147,7 @@ solve matrix (x:xs) processedIntersections =
 --  around given intersection.
     possibleMoves = uniqueCombinations value fieldsAroundIntersection
     everyPossibleBoard = map(\moves -> setValuesUnderIndexesToValue matrix moves filledValueField) possibleMoves
+    valid_boards = filter (\board -> isBoardFilledForIntersection board x) everyPossibleBoard
 
     solveTransform =
       (\transformedBoard -> solve transformedBoard xs (x:processedIntersections))
@@ -154,6 +155,6 @@ solve matrix (x:xs) processedIntersections =
   in
 --  Applying unnestMaybe is necessary, because firstSatisfying function returns Maybe a, and applied to given input
 --  returns Maybe (Maybe (Matrix Int))
-    unnestMaybe (firstSatisfying satisfyCondition (map (solveTransform) everyPossibleBoard))
+    unnestMaybe (firstSatisfying satisfyCondition (map (solveTransform) valid_boards))
 
 
