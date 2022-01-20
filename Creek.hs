@@ -18,7 +18,7 @@ data Creek = Creek (Int, Int) [((Int, Int), Int)] deriving (Read, Show)
 
 fromStdInput :: IO Creek
 fromStdInput = do
-  putStr "Serialized creek: "
+  putStrLn "Serialized creek: "
   serializedCreek <- getLine
   let creek = read serializedCreek:: Creek
 
@@ -26,7 +26,7 @@ fromStdInput = do
 
 fromFile :: IO Creek
 fromFile = do
-  putStr "Path to file containing serialized creek: "
+  putStrLn "Path to file containing serialized creek: "
   path <- getLine
   serializedCreek <- readFile path
   let creek = read serializedCreek:: Creek
